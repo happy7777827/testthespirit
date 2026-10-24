@@ -184,10 +184,64 @@
    1. TABLET & MOBILE VIEWPORTS (max-width: 768px)
 ---------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  /* Prevent horizontal blowout across mobile screens without breaking position: sticky */
-  html, body {
+  /* Whole-page smooth momentum scrolling & horizontal blowout prevention on mobile */
+  html {
     max-width: 100vw !important;
     overflow-x: clip !important;
+    scroll-behavior: smooth !important;
+    scroll-padding-top: 56px !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  body {
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+  }
+
+  main,
+  section,
+  footer {
+    scroll-margin-top: 56px !important;
+    touch-action: pan-y !important;
+  }
+
+  /* Smooth GPU-accelerated interpolation for all whole-page scroll-linked elements on mobile */
+  .kinetic-ribbon-row,
+  .statement-medallion-parallax,
+  .statement-numeral-parallax,
+  .horizontal-study-track {
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+
+  .scrubbed-statement-word {
+    transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+
+  .horizontal-study-sticky {
+    height: 100dvh !important;
+    height: 100vh;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+
+  .motion-ok .reveal-item {
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    will-change: transform, opacity !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
   /* Safe interactive inputs (prevents iOS Safari auto-zoom on mobile inputs) */
@@ -367,9 +421,9 @@
     justify-content: center !important;
   }
 
-  /* Portal Hero Section: Full 100vw edge-to-edge width with zero side padding/vacant space */
+  /* Portal Hero Section: Balanced 530vh height on mobile so a little scroll moves the orbit slightly faster than normal with smooth inertia */
   #portal-hero {
-    height: 650vh !important;
+    height: 530vh !important;
     width: 100vw !important;
     max-width: 100vw !important;
     padding: 0 !important;
@@ -404,6 +458,7 @@
 
   /* ==========================================================================
      MOBILE SCROLL-DRIVEN ZOOM, CENTERED POSITION 1 -> SINGLE-IMAGE POSITION 2
+     WITH FAST & SMOOTH SCROLLING EFFECT
      ========================================================================== */
   .hero-orbit-stage {
     width: 100vw !important;
@@ -415,11 +470,16 @@
     position: relative !important;
     top: -4vh !important;
     left: var(--mobile-orbit-left, -7vw) !important;
-    transform: scale(var(--mobile-orbit-zoom, 0.90)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
     filter: var(--mobile-orbit-blur, blur(0px)) !important;
     opacity: var(--mobile-orbit-opacity, 1) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.22s ease-out !important;
     will-change: transform, left, filter, opacity !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
   .orbit-container {
@@ -437,24 +497,29 @@
     transform-origin: center center !important;
   }
 
-  /* Orbiting images with scroll-driven scale/zoom and zero blur while orbiting */
+  /* Orbiting images with scroll-driven scale/zoom, smooth interpolation, and zero blur while orbiting */
   .orbit-image {
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
     border-radius: 50% !important;
     opacity: 1 !important;
-    transform: scale(var(--mobile-item-zoom, 1)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-item-zoom, 1)) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
     filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.58)) !important;
     will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
   .orbit-item {
     top: 0 !important;
     left: 0 !important;
     transform-origin: center center !important;
-    will-change: transform !important;
+    will-change: offset-distance, transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
   /* Center title inside the orbit ring on mobile */
@@ -597,6 +662,12 @@
    2. STANDARD MOBILE PHONES (max-width: 640px)
 ---------------------------------------------------------------------------- */
 @media (max-width: 640px) {
+  html, body {
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+  }
+
   /* Section padding on small mobile (excluding full-bleed #portal-hero) */
   section:not(#portal-hero) {
     padding-left: 1rem !important;
@@ -606,6 +677,7 @@
   }
 
   #portal-hero {
+    height: 520vh !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100vw !important;
@@ -622,10 +694,13 @@
     flex-shrink: 0 !important;
     top: -4vh !important;
     left: var(--mobile-orbit-left, -7vw) !important;
-    transform: scale(var(--mobile-orbit-zoom, 0.90)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
     filter: var(--mobile-orbit-blur, blur(0px)) !important;
     opacity: var(--mobile-orbit-opacity, 1) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.22s ease-out !important;
   }
 
   /* Typography inside ellipse */
@@ -674,6 +749,12 @@
    3. COMPACT MOBILE PHONES (max-width: 480px)
 ---------------------------------------------------------------------------- */
 @media (max-width: 480px) {
+  html, body {
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+  }
+
   /* Header & Mobile Menu tighter spacing on compact phones */
   header > div.header-bar {
     padding-left: 0.75rem !important;
@@ -703,6 +784,10 @@
     font-size: 8.5px !important;
   }
 
+  #portal-hero {
+    height: 500vh !important;
+  }
+
   /* OrbitImages Stage: Position 1 centered ring -> Position 2 zoomed single image */
   .hero-orbit-stage {
     width: 100vw !important;
@@ -713,10 +798,13 @@
     flex-shrink: 0 !important;
     top: -4vh !important;
     left: var(--mobile-orbit-left, -7vw) !important;
-    transform: scale(var(--mobile-orbit-zoom, 0.90)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
     filter: var(--mobile-orbit-blur, blur(0px)) !important;
     opacity: var(--mobile-orbit-opacity, 1) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.22s ease-out !important;
   }
 
   /* Single visible focused medallion on compact mobile with scroll-driven zoom and zero blur while orbiting */
@@ -726,8 +814,9 @@
     object-fit: contain !important;
     border-radius: 50% !important;
     opacity: 1 !important;
-    transform: scale(var(--mobile-item-zoom, 1)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-item-zoom, 1)) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
     filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.58)) !important;
   }
 
@@ -767,6 +856,16 @@
    4. ULTRA-COMPACT MOBILE PHONES (max-width: 360px)
 ---------------------------------------------------------------------------- */
 @media (max-width: 360px) {
+  html, body {
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  #portal-hero {
+    height: 490vh !important;
+  }
+
   /* Extra compact orbit stage: Position 1 centered ring -> Position 2 zoomed single image */
   .hero-orbit-stage {
     width: 100vw !important;
@@ -777,10 +876,13 @@
     flex-shrink: 0 !important;
     top: -4vh !important;
     left: var(--mobile-orbit-left, -7vw) !important;
-    transform: scale(var(--mobile-orbit-zoom, 0.90)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
     filter: var(--mobile-orbit-blur, blur(0px)) !important;
     opacity: var(--mobile-orbit-opacity, 1) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.22s ease-out !important;
   }
 
   .orbit-image {
@@ -789,8 +891,9 @@
     object-fit: contain !important;
     border-radius: 50% !important;
     opacity: 1 !important;
-    transform: scale(var(--mobile-item-zoom, 1)) !important;
+    transform: translate3d(0, 0, 0) scale(var(--mobile-item-zoom, 1)) !important;
     transform-origin: center center !important;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
   /* Deck card max width */

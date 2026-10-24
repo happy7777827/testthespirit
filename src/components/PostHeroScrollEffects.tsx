@@ -22,7 +22,7 @@ export function ScrollKineticRibbon({ scrollY, motionOk }: ScrollKineticRibbonPr
   return (
     <div className="relative z-20 bg-[#0A0C0E] hairline-y overflow-hidden py-3.5 select-none">
       <div
-        className="flex items-center gap-10 whitespace-nowrap will-change-transform"
+        className="kinetic-ribbon-row flex items-center gap-10 whitespace-nowrap will-change-transform"
         style={{
           transform: `translate3d(${shiftLeft.toFixed(1)}px, 0, 0)`
         }}
@@ -36,7 +36,7 @@ export function ScrollKineticRibbon({ scrollY, motionOk }: ScrollKineticRibbonPr
       </div>
 
       <div
-        className="flex items-center gap-10 whitespace-nowrap mt-2 pt-2 hairline-t will-change-transform"
+        className="kinetic-ribbon-row flex items-center gap-10 whitespace-nowrap mt-2 pt-2 hairline-t will-change-transform"
         style={{
           transform: `translate3d(${shiftRight.toFixed(1)}px, 0, 0)`
         }}
@@ -149,7 +149,7 @@ function ScrubbedWord({
   return (
     <motion.span
       style={{ opacity, y }}
-      className={`inline-block will-change-transform ${colorClass}`}
+      className={`scrubbed-statement-word inline-block will-change-transform ${colorClass}`}
     >
       {word}
     </motion.span>
@@ -177,9 +177,13 @@ export function HorizontalScrollStudyTrack({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [maxTranslate, setMaxTranslate] = useState(1400);
 
-  // Directly track viewport scroll metrics - 100% immune to mount race conditions or layout shifts
+  // Directly track viewport scroll metrics with rAF throttling for smooth mobile scrolling
   useEffect(() => {
+    let rafId = 0;
+    let ticking = false;
+
     const updateMetrics = () => {
+      ticking = false;
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const scrollableDistance = sectionRef.current.offsetHeight - window.innerHeight;
@@ -200,14 +204,21 @@ export function HorizontalScrollStudyTrack({
       }
     };
 
-    window.addEventListener('scroll', updateMetrics, { passive: true });
-    window.addEventListener('resize', updateMetrics, { passive: true });
-    const raf = requestAnimationFrame(updateMetrics);
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(updateMetrics);
+      }
+    };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    rafId = requestAnimationFrame(updateMetrics);
 
     return () => {
-      window.removeEventListener('scroll', updateMetrics);
-      window.removeEventListener('resize', updateMetrics);
-      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+      cancelAnimationFrame(rafId);
     };
   }, [studies]);
 
@@ -250,8 +261,8 @@ export function HorizontalScrollStudyTrack({
   const translateX = -(scrollProgress * maxTranslate);
 
   return (
-    <div ref={sectionRef} className="relative h-[280vh] bg-[#0A0C0E] hairline-t">
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 pb-4 sm:pb-8 px-4 sm:px-6">
+    <div ref={sectionRef} className="horizontal-study-section relative h-[280vh] bg-[#0A0C0E] hairline-t">
+      <div className="horizontal-study-sticky sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 pb-4 sm:pb-8 px-4 sm:px-6">
         {/* Top Stage Header */}
         <div className="w-full max-w-[1380px] mx-auto flex flex-wrap items-end justify-between gap-3 sm:gap-4">
           <div>
@@ -339,7 +350,7 @@ export function HorizontalScrollStudyTrack({
               willChange: 'transform',
               transition: 'transform 0.05s linear'
             }}
-            className="flex items-stretch gap-4 sm:gap-7 pl-2 sm:pl-8"
+            className="horizontal-study-track flex items-stretch gap-4 sm:gap-7 pl-2 sm:pl-8"
           >
             {studies.map((study, index) => (
               <div

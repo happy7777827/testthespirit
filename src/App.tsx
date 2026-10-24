@@ -125,8 +125,17 @@ export default function App() {
     setViewportW(window.innerWidth || 1200);
     setScrollY(window.scrollY || 0);
 
+    let rafId = 0;
+    let ticking = false;
+
     const onScroll = () => {
-      setScrollY(window.scrollY);
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(() => {
+          ticking = false;
+          setScrollY(window.scrollY);
+        });
+      }
     };
     const onResize = () => {
       setViewportH(window.innerHeight || 900);
@@ -142,6 +151,7 @@ export default function App() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -177,10 +187,22 @@ export default function App() {
     return () => observer.disconnect();
   }, [motionOk]);
 
+  // Responsive sizing calibrated for mobile (<768), tablet (<1024), and desktop
+  const isMobile = viewportW < 768;
+  const isTablet = viewportW < 1024;
+
   // Scroll progress for the consolidated Hero section (Doors -> Video -> Rotated Ellipse -> Orbit Carousel)
-  const { scrollYProgress: heroProgress } = useScroll({
+  const { scrollYProgress: rawHeroProgress } = useScroll({
     target: heroSectionRef,
     offset: ['start start', 'end end']
+  });
+
+  // Smooth spring physics so even a small touch scroll on mobile glides smoothly
+  const heroProgress = useSpring(rawHeroProgress, {
+    stiffness: isMobile ? 75 : 120,
+    damping: isMobile ? 24 : 28,
+    mass: isMobile ? 0.48 : 0.5,
+    restDelta: 0.0001
   });
 
   // Phase 1: Doors parting & initial title travel outward (0.00 -> 0.16)
@@ -229,10 +251,7 @@ export default function App() {
     [20, 0, 0, 20, 20, 0, 0]
   );
 
-  // Phase 3: Orbit carousel morphing inside the ellipse (0.33 -> 0.86)
-  // Responsive sizing calibrated for mobile (<768), tablet (<1024), and desktop
-  const isMobile = viewportW < 768;
-  const isTablet = viewportW < 1024;
+  // Phase 3: Orbit carousel morphing inside the ellipse (0.28 -> 0.86)
   const targetRadius = isMobile
     ? 350
     : isTablet
@@ -246,60 +265,60 @@ export default function App() {
   // Scroll-driven item size transformation (zooming up as the user scrolls in)
   const orbitItemSize = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [initialItemSize, focusedItemSize, focusedItemSize, initialItemSize]
   );
   // Scroll-driven track expansion transformation (Position 1 ellipse -> Position 2 large circle)
   const orbitRx = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [initialRx, targetRadius, targetRadius, initialRx]
   );
   const orbitRy = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [initialRy, targetRadius, targetRadius, initialRy]
   );
   const orbitRotation = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [-15, 0, 0, -15]
   );
-  // On mobile (<768px), shift the stage from 0vw (Position 1: centered ring) to -120vw (Position 2: 1 image visible) via media query
+  // On mobile (<768px), shift the stage from -7vw (Position 1: centered ring) to -120vw (Position 2: 1 image visible) via media query
   const orbitTx = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [0, isMobile ? 0 : -targetRadius, isMobile ? 0 : -targetRadius, 0]
   );
   const focusStrength = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [0, 1, 1, 0]
   );
 
   // Scroll-driven zoom / scale for the entire hero orbit stage
   const orbitStageScale = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [isMobile ? 0.90 : 0.85, isMobile ? 2.45 : 1.05, isMobile ? 2.45 : 1.05, isMobile ? 0.90 : 0.88]
   );
 
   // Mobile scroll-driven transition:
-  // Position 1 (0.17 -> 0.28): shifted slightly left (-7vw) at 0.90x scale on a 100vw stage so all orbiting images frame the title symmetrically
-  // Position 2 (0.40 -> 0.80): zoomed in (2.45x) and shifted left (-120vw) so only 1 focused orbiting image is viewed while scrolling
+  // Position 1 (0.17 -> 0.26): shifted slightly left (-7vw) at 0.90x scale on a 100vw stage so all orbiting images frame the title symmetrically
+  // Position 2 (0.37 -> 0.82): zoomed in (2.45x) and shifted left (-120vw) so only 1 focused orbiting image is viewed while scrolling
   const mobileScrollZoom = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [0.90, 2.45, 2.45, 0.90]
   );
   const mobileOrbitLeft = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     ['-7vw', '-120vw', '-120vw', '-7vw']
   );
   const mobileMedallionZoom = useTransform(
     heroProgress,
-    [0.28, 0.40, 0.80, 0.90],
+    [0.26, 0.37, 0.82, 0.90],
     [1.0, 1.24, 1.24, 1.0]
   );
   // 0px blur while orbiting so images are seen clearly; blurs out only when finished orbiting (0.84 -> 0.95)
@@ -322,12 +341,24 @@ export default function App() {
     const pos = heroProgress.get();
     const scrollDelta = pos - prevHeroProgress.current;
     prevHeroProgress.current = pos;
+    const dt = Math.min(delta, 50) / 1000;
     let frameSpeed = 0;
-    if (pos > 0.32 && pos < 0.85) {
-      frameSpeed = scrollDelta * 220;
+
+    if (isMobile) {
+      // On mobile: slightly faster than normal (320 vs 220) with smooth continuous glide
+      if (pos > 0.26 && pos < 0.86) {
+        frameSpeed = scrollDelta * 320 + dt * 2.8;
+      } else {
+        frameSpeed = scrollDelta * 140 + dt * 3.0;
+      }
     } else {
-      frameSpeed = (delta / 1000) * 2.5;
+      if (pos > 0.30 && pos < 0.85) {
+        frameSpeed = scrollDelta * 220;
+      } else {
+        frameSpeed = dt * 2.5;
+      }
     }
+
     orbitProgress.set(orbitProgress.get() + frameSpeed);
   });
 
@@ -916,7 +947,7 @@ export default function App() {
           {/* Floating Circular Medallion off the right edge - kept straight and upright so God's sacred name (יהוה) never rotates or tilts */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 sm:-right-16 top-1/2 -translate-y-1/2 w-[340px] h-[340px] sm:w-[480px] sm:h-[480px] rounded-full overflow-hidden opacity-45 drop-shadow-[0_24px_48px_rgba(0,0,0,0.85)]"
+            className="statement-medallion-parallax pointer-events-none absolute -right-24 sm:-right-16 top-1/2 -translate-y-1/2 w-[340px] h-[340px] sm:w-[480px] sm:h-[480px] rounded-full overflow-hidden opacity-45 drop-shadow-[0_24px_48px_rgba(0,0,0,0.85)]"
             style={{
               transform: `translate3d(0, ${circleDriftY.toFixed(1)}px, 0)`,
               willChange: 'transform'
@@ -976,7 +1007,7 @@ export default function App() {
 
               {/* Outlined index numeral with counter-parallax drift */}
               <div
-                className="lg:col-span-3 flex lg:justify-end will-change-transform"
+                className="statement-numeral-parallax lg:col-span-3 flex lg:justify-end will-change-transform"
                 style={{
                   transform: `translate3d(0, ${numeralDriftY.toFixed(1)}px, 0)`
                 }}
