@@ -1,0 +1,6 @@
+{
+  "name": "Test the Spirit",
+  "description": "Examine Every Teaching. Search the Scriptures. Hold Fast to the Truth. A biblical study archive and scripture discernment resource led by Pastor Shahid Hanif & Pastor Sandesh Shalom.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-ground: #0A0C0E;
+    --bg-secondary: #101317;
+    --ink-primary: #EDE7DC;
+    --ink-secondary: #9EA5A8;
+    --ink-muted: #6C7378;
+    --accent-amber: #E8913C;
+    --accent-teal: #2E6B72;
+    --hairline: rgba(237, 231, 220, 0.13);
+    --font-display: 'Syne', sans-serif;
+    --font-sans: 'Sora', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    background-color: var(--bg-ground);
+    color: var(--ink-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--bg-ground);
+    color: var(--ink-primary);
+    overflow-x: hidden;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.font-syne {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+.font-sora {
+  font-family: var(--font-sans);
+}
+
+.label-caps {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+}
+
+.hairline-t {
+  border-top: 1px solid rgba(237, 231, 220, 0.13);
+}
+
+.hairline-b {
+  border-bottom: 1px solid rgba(237, 231, 220, 0.13);
+}
+
+.hairline-y {
+  border-top: 1px solid rgba(237, 231, 220, 0.13);
+  border-bottom: 1px solid rgba(237, 231, 220, 0.13);
+}
+
+.hairline-border {
+  border: 1px solid rgba(237, 231, 220, 0.13);
+}
+
+/* Outlined index numeral using -webkit-text-stroke with transparent fill */
+.outlined-numeral {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(237, 231, 220, 0.22);
+  user-select: none;
+}
+
+/* Drop shadow ONLY on the throwable deck cards */
+.deck-card-shadow {
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.72), 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* One-way entry reveal animations scoped strictly to .motion-ok */
+.motion-ok .reveal-item {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.motion-ok .reveal-item.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ============================================================================
+   OrbitImages Styles (from happy7777827/test-the-spirit)
+============================================================================ */
+.orbit-container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.orbit-scaling-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.orbit-scaling-container--responsive {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: center center;
+}
+
+.orbit-rotation-wrapper {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  position: relative;
+}
+
+.orbit-path-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbit-item {
+  position: absolute;
+  will-change: transform;
+  user-select: none;
+}
+
+.orbit-center-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.orbit-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
