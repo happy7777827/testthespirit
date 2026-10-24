@@ -225,13 +225,13 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
             </div>
 
             {/* Filter buttons */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {['All', 'Torah & Spirit', 'Walk & Life', 'Adoption & Glory'].map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-full label-caps transition-colors cursor-pointer text-xs ${
+                  className={`px-3 py-1.5 rounded-full label-caps transition-colors cursor-pointer text-[10.5px] sm:text-xs min-h-[34px] flex items-center ${
                     activeCategory === cat
                       ? 'bg-[#E8913C] text-[#0A0C0E] font-bold'
                       : 'bg-[#0A0C0E] border border-[rgba(237,231,220,0.13)] text-[#9EA5A8] hover:text-[#EDE7DC]'
@@ -244,7 +244,7 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
           </div>
 
           {/* Cards Grid for Romans 8:2, 8:4, 8:13, 8:14, 8:15, 8:16 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredVerses
               .filter((v) => v.ref !== 'Rom 8:17')
               .map((verse, idx) => {
@@ -260,7 +260,7 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                       delay: idx * 0.06,
                       ease: [0.16, 1, 0.3, 1]
                     }}
-                    className="bg-[#0A0C0E] hairline-border p-6 flex flex-col justify-between space-y-5 hover:border-[#E8913C]/40 transition-colors group"
+                    className="bg-[#0A0C0E] hairline-border p-5 sm:p-6 flex flex-col justify-between space-y-5 hover:border-[#E8913C]/40 transition-colors group"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -290,7 +290,7 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                         <button
                           type="button"
                           onClick={() => handleCopy(verse)}
-                          className="flex items-center gap-1.5 label-caps text-[#6C7378] hover:text-[#E8913C] transition-colors cursor-pointer"
+                          className="flex items-center gap-1.5 label-caps text-[#6C7378] hover:text-[#E8913C] transition-colors cursor-pointer min-h-[36px]"
                         >
                           {isCopied ? (
                             <>
@@ -321,11 +321,11 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-gradient-to-r from-[#0A0C0E] via-[#101317] to-[#0A0C0E] border border-[#E8913C]/50 p-8 sm:p-10 relative overflow-hidden"
+                className="bg-gradient-to-r from-[#0A0C0E] via-[#101317] to-[#0A0C0E] border border-[#E8913C]/50 p-6 sm:p-8 md:p-10 relative overflow-hidden"
               >
-                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
                   <div className="lg:col-span-8 space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <span className="px-3 py-1 rounded-full bg-[#E8913C]/10 border border-[#E8913C] label-caps text-[#E8913C]">
                         ROMANS 8:17 · APEX PROMISE
                       </span>
@@ -334,7 +334,7 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                       </span>
                     </div>
 
-                    <blockquote className="font-syne font-bold text-2xl sm:text-3xl text-[#EDE7DC] leading-snug">
+                    <blockquote className="font-syne font-bold text-xl sm:text-2xl md:text-3xl text-[#EDE7DC] leading-snug">
                       “And if children, also heirs—heirs of Elohim and co-heirs with Messiah—if indeed we suffer with Him so that we may also be glorified with Him.”
                     </blockquote>
 
@@ -344,11 +344,11 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                     </p>
                   </div>
 
-                  <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 justify-center">
+                  <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end gap-3 justify-center w-full">
                     <button
                       type="button"
                       onClick={() => handleCopy(ROMANS_GOAL_VERSES.find((v) => v.ref === 'Rom 8:17')!)}
-                      className="px-6 py-3 rounded-full bg-transparent border border-[#E8913C] label-caps text-[#E8913C] hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-2"
+                      className="w-full sm:w-auto px-5 py-3 rounded-full bg-transparent border border-[#E8913C] label-caps text-[#E8913C] hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer text-center justify-center flex items-center gap-2"
                     >
                       {copiedRef === 'Rom 8:17' ? (
                         <>
@@ -367,7 +367,7 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenStudyGuide(holySpiritStudy)}
-                        className="px-6 py-3 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-2"
+                        className="w-full sm:w-auto px-5 py-3 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer text-center justify-center flex items-center gap-2"
                       >
                         <BookOpen className="w-4 h-4 text-[#2E6B72]" />
                         <span>OPEN HOLY SPIRIT STUDY</span>

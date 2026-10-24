@@ -19,18 +19,18 @@ export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderM
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="study-modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-8 text-[#EDE7DC] overflow-hidden"
+        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-4 sm:my-8 text-[#EDE7DC] overflow-hidden rounded-sm"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Visual Banner */}
-        <div className="relative h-56 overflow-hidden hairline-b bg-[#0A0C0E]">
+        <div className="relative h-44 sm:h-56 overflow-hidden hairline-b bg-[#0A0C0E]">
           <img
             src={study.image}
             alt={study.title}
@@ -41,27 +41,27 @@ export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderM
           <button
             onClick={onClose}
             aria-label="Close study guide"
-            className="absolute top-4 right-4 w-9 h-9 bg-[#0A0C0E]/85 hairline-border flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 min-w-[40px] min-h-[40px] bg-[#0A0C0E]/90 hairline-border flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer rounded-full"
           >
             <X className="w-4 h-4" />
           </button>
 
-          <div className="absolute bottom-5 left-6 right-6 bg-[#0A0C0E]/85 p-4 hairline-border">
-            <div className="label-caps text-[#E8913C] mb-1">
+          <div className="absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 bg-[#0A0C0E]/90 p-3 sm:p-4 hairline-border">
+            <div className="label-caps text-[#E8913C] text-[10px] sm:text-[10.5px] mb-1">
               BIBLICAL STUDY ARCHIVE · {study.category} · {study.keyVerseRef}
             </div>
             <h2
               id="study-modal-title"
-              className="font-syne font-bold text-2xl sm:text-3xl text-[#EDE7DC]"
+              className="font-syne font-bold text-lg sm:text-2xl md:text-3xl text-[#EDE7DC]"
             >
               {study.title}
             </h2>
-            <p className="text-xs sm:text-sm text-[#9EA5A8] mt-1">{study.subtitle}</p>
+            <p className="text-xs sm:text-sm text-[#9EA5A8] mt-1 line-clamp-1 sm:line-clamp-none">{study.subtitle}</p>
           </div>
         </div>
 
         {/* Body Content */}
-        <div className="p-6 sm:p-8 space-y-6 max-h-[68vh] overflow-y-auto">
+        <div className="p-4 sm:p-8 space-y-6 max-h-[70vh] sm:max-h-[68vh] overflow-y-auto">
           {/* Foundational Scripture Box */}
           <div className="bg-[#0A0C0E] p-5 border border-[#E8913C]">
             <div className="label-caps text-[#E8913C] mb-2">
@@ -230,35 +230,35 @@ export function StudyPlanModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="workbook-modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-8 text-[#EDE7DC] overflow-hidden"
+        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-4 sm:my-8 text-[#EDE7DC] overflow-hidden rounded-sm"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-5 hairline-b bg-[#0A0C0E]">
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-5 hairline-b bg-[#0A0C0E]">
           <div>
-            <div className="label-caps text-[#E8913C]">
+            <div className="label-caps text-[#E8913C] text-[10px] sm:text-[10.5px]">
               BEREAN DISCERNMENT FRAMEWORK
             </div>
-            <h2 id="workbook-modal-title" className="font-syne font-bold text-xl sm:text-2xl text-[#EDE7DC] mt-0.5">
+            <h2 id="workbook-modal-title" className="font-syne font-bold text-lg sm:text-2xl text-[#EDE7DC] mt-0.5">
               Begin Your Scripture Study.
             </h2>
           </div>
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="w-9 h-9 bg-[#101317] hairline-border flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer"
+            className="min-w-[40px] min-h-[40px] bg-[#101317] hairline-border rounded-full flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 sm:p-8 space-y-6 max-h-[74vh] overflow-y-auto">
+        <div className="p-4 sm:p-8 space-y-6 max-h-[76vh] sm:max-h-[74vh] overflow-y-auto">
           {/* Interactive Pillar Selector */}
           <div>
             <div className="label-caps text-[#6C7378] mb-2.5">
@@ -352,31 +352,31 @@ export function StudyPlanModal({
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block label-caps text-[#9EA5A8] mb-1.5">YOUR NAME</label>
+                    <label className="block label-caps text-[#9EA5A8] text-[10px] sm:text-[10.5px] mb-1.5">YOUR NAME</label>
                     <input
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Enter your name"
-                      className="w-full px-3.5 py-2 bg-[#0A0C0E] hairline-border text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C]"
+                      className="w-full px-3.5 py-2.5 sm:py-2 bg-[#0A0C0E] hairline-border text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C] rounded-sm"
                     />
                   </div>
                   <div>
-                    <label className="block label-caps text-[#9EA5A8] mb-1.5">EMAIL ADDRESS</label>
+                    <label className="block label-caps text-[#9EA5A8] text-[10px] sm:text-[10.5px] mb-1.5">EMAIL ADDRESS</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="w-full px-3.5 py-2 bg-[#0A0C0E] hairline-border text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C]"
+                      className="w-full px-3.5 py-2.5 sm:py-2 bg-[#0A0C0E] hairline-border text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C] rounded-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block label-caps text-[#9EA5A8] mb-1.5">
+                  <label className="block label-caps text-[#9EA5A8] text-[10px] sm:text-[10.5px] mb-1.5">
                     SCRIPTURE REFERENCE OR QUESTION (OPTIONAL)
                   </label>
                   <input
@@ -384,13 +384,13 @@ export function StudyPlanModal({
                     value={questionText}
                     onChange={(e) => setQuestionText(e.target.value)}
                     placeholder="e.g., 1 John 4:1 — How do we test every teaching by Scripture?"
-                    className="w-full px-3.5 py-2 bg-[#0A0C0E] hairline-border text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C]"
+                    className="w-full px-3.5 py-2.5 sm:py-2 bg-[#0A0C0E] hairline-border text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none focus:border-[#E8913C] rounded-sm"
                   />
                 </div>
                 {formError && <p className="text-xs text-[#E8913C]">{formError}</p>}
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-full bg-transparent border border-[#E8913C] text-[#E8913C] label-caps font-semibold hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-transparent border border-[#E8913C] text-[#E8913C] label-caps font-semibold hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer text-center justify-center flex items-center min-h-[44px]"
                 >
                   SUBMIT STUDY REQUEST
                 </button>

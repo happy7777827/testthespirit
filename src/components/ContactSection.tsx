@@ -162,7 +162,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-7"
           >
-            <div className="bg-[#101317] border border-[rgba(237,231,220,0.13)] rounded-2xl p-6 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative overflow-hidden">
+            <div className="bg-[#101317] border border-[rgba(237,231,220,0.13)] rounded-2xl p-5 sm:p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative overflow-hidden">
               {/* Subtle amber gradient halo in top-right */}
               <div
                 aria-hidden="true"
@@ -185,10 +185,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                   method="POST"
                   acceptCharset="UTF-8"
                   onSubmit={handleSubmit}
-                  className="space-y-6"
+                  className="space-y-5 sm:space-y-6"
                 >
                   {/* Name Row (First name & Last name) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div className="space-y-2">
                       <label
                         htmlFor="form-first-name"
@@ -205,7 +205,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                           onChange={(e) => setFirstName(e.target.value)}
                           placeholder="Shelomi"
                           required
-                          className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
+                          className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -226,7 +226,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                           onChange={(e) => setLastName(e.target.value)}
                           placeholder="Ben Abraham"
                           required
-                          className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
+                          className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -249,7 +249,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="shelomi@domain.com"
                         required
-                        className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
+                        className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -271,7 +271,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Enter your message here..."
                         required
-                        className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors resize-y min-h-[120px]"
+                        className="w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] focus:border-[#E8913C] rounded-lg px-4 py-3 text-base sm:text-sm text-[#EDE7DC] placeholder-[#6C7378] focus:outline-none transition-colors resize-y min-h-[120px]"
                       />
                     </div>
                   </div>

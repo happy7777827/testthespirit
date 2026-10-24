@@ -83,16 +83,16 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E]/85 via-transparent to-transparent pointer-events-none" />
 
                 {/* Overlay Badge Bar */}
-                <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-xs text-[#EDE7DC]">
-                  <div className="flex items-center gap-2 bg-[#0A0C0E]/85 backdrop-blur-md px-3 py-1.5 rounded border border-[rgba(237,231,220,0.15)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E8913C]" />
-                    <span className="font-syne font-semibold tracking-wide">PASTOR SHAHID HANIF</span>
+                <div className="absolute bottom-3 inset-x-3 sm:bottom-4 sm:inset-x-4 flex items-center justify-between gap-2 text-xs text-[#EDE7DC]">
+                  <div className="flex items-center gap-2 bg-[#0A0C0E]/90 backdrop-blur-md px-2.5 py-1.5 sm:px-3 rounded border border-[rgba(237,231,220,0.15)] text-[11px] sm:text-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#E8913C] shrink-0" />
+                    <span className="font-syne font-semibold tracking-wide truncate">PASTOR SHAHID HANIF</span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setIsPosterModalOpen(true)}
-                    className="flex items-center gap-1.5 bg-[#E8913C] text-[#0A0C0E] hover:bg-[#ffaa5a] px-3 py-1.5 rounded font-syne font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-lg"
+                    className="flex items-center gap-1.5 bg-[#E8913C] text-[#0A0C0E] hover:bg-[#ffaa5a] px-3 py-1.5 rounded font-syne font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-lg shrink-0 min-h-[36px]"
                     aria-label="Enlarge Pastor Shahid Hanif poster"
                   >
                     <Maximize2 className="w-3.5 h-3.5" />
@@ -102,7 +102,7 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
               </div>
 
               {/* Caption under poster */}
-              <p className="mt-3 text-xs text-[#6C7378] flex items-center justify-between px-1">
+              <p className="mt-3 text-xs text-[#6C7378] flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
                 <span>Lecture at the Pulpit · Karachi &amp; Global Berean Ministry</span>
                 <span className="text-[#9EA5A8]">Click image to inspect lecture notes</span>
               </p>
@@ -205,24 +205,24 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
                 <a
                   href="https://www.youtube.com/@testthespirit"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#E8913C] hover:bg-[#ffaa5a] text-[#0A0C0E] font-syne font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer shadow-md hover:shadow-xl hover:translate-y-[-1px]"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-[#E8913C] hover:bg-[#ffaa5a] text-[#0A0C0E] font-syne font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer shadow-md hover:shadow-xl hover:translate-y-[-1px] text-center"
                 >
                   <span>Watch Pastor Shahid on YouTube</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                 </a>
 
                 {onNavigateToContact && (
                   <button
                     type="button"
                     onClick={onNavigateToContact}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-transparent hover:bg-[#101317] text-[#EDE7DC] border border-[rgba(237,231,220,0.2)] hover:border-[#E8913C] font-syne font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-transparent hover:bg-[#101317] text-[#EDE7DC] border border-[rgba(237,231,220,0.2)] hover:border-[#E8913C] font-syne font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer text-center"
                   >
-                    <MessageSquare className="w-3.5 h-3.5 text-[#E8913C]" />
+                    <MessageSquare className="w-3.5 h-3.5 text-[#E8913C] shrink-0" />
                     <span>Send Fellowship Message</span>
                   </button>
                 )}
@@ -239,7 +239,7 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-black/90 backdrop-blur-md"
             onClick={() => setIsPosterModalOpen(false)}
           >
             <motion.div
@@ -247,18 +247,18 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.94, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative max-w-4xl max-h-[92vh] w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] rounded-xl overflow-hidden flex flex-col shadow-2xl"
+              className="relative max-w-4xl max-h-[96vh] sm:max-h-[92vh] w-full bg-[#0A0C0E] border border-[rgba(237,231,220,0.18)] rounded-xl overflow-hidden flex flex-col shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Topbar */}
-              <div className="flex items-center justify-between px-6 py-4 hairline-b bg-[#101317]">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#E8913C]" />
+              <div className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 hairline-b bg-[#101317]">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2 h-2 rounded-full bg-[#E8913C] shrink-0" />
                   <div>
-                    <h3 className="font-syne font-bold text-sm text-[#EDE7DC]">
+                    <h3 className="font-syne font-bold text-xs sm:text-sm text-[#EDE7DC]">
                       Pastor Shahid Hanif · “Shalom in the Messiah”
                     </h3>
-                    <p className="text-[11px] text-[#9EA5A8]">
+                    <p className="text-[10px] sm:text-[11px] text-[#9EA5A8]">
                       Pastor Shahid Hanif · Lecture Notes &amp; Biblical Feasts
                     </p>
                   </div>
@@ -267,7 +267,7 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsPosterModalOpen(false)}
-                  className="w-8 h-8 rounded-full border border-[rgba(237,231,220,0.2)] flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer"
+                  className="min-w-[40px] min-h-[40px] rounded-full border border-[rgba(237,231,220,0.2)] flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer shrink-0"
                   aria-label="Close modal"
                 >
                   <X className="w-4 h-4" />
@@ -275,11 +275,11 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
               </div>
 
               {/* Modal Image Body with smooth scrolling */}
-              <div className="overflow-auto p-4 sm:p-6 flex items-center justify-center bg-[#070809]">
+              <div className="overflow-auto p-2 sm:p-6 flex items-center justify-center bg-[#070809]">
                 <img
                   src="/assets/aistudio/Shalom_in_the_Messiah_Lecture_Poster_31435eb6.png"
                   alt="Pastor Shahid Hanif - Full lecture poster with scripture exegesis"
-                  className="max-h-[76vh] w-auto object-contain rounded shadow-lg"
+                  className="max-h-[68vh] sm:max-h-[76vh] w-auto max-w-full object-contain rounded shadow-lg"
                 />
               </div>
 

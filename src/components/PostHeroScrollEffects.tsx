@@ -251,26 +251,26 @@ export function HorizontalScrollStudyTrack({
 
   return (
     <div ref={sectionRef} className="relative h-[280vh] bg-[#0A0C0E] hairline-t">
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-20 pb-8 px-6">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 pb-4 sm:pb-8 px-4 sm:px-6">
         {/* Top Stage Header */}
-        <div className="w-full max-w-[1380px] mx-auto flex flex-wrap items-end justify-between gap-4">
+        <div className="w-full max-w-[1380px] mx-auto flex flex-wrap items-end justify-between gap-3 sm:gap-4">
           <div>
-            <div className="flex items-center gap-2.5 mb-2">
+            <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#E8913C]" />
-              <span className="label-caps text-[#E8913C]">
+              <span className="label-caps text-[#E8913C] text-[9.5px] sm:text-[10.5px]">
                 HORIZONTAL SCROLL REEL · BIBLICAL STUDY ARCHIVE
               </span>
             </div>
             <h3
               className="font-syne font-extrabold text-[#EDE7DC] tracking-[-0.03em] leading-none"
-              style={{ fontSize: 'clamp(1.75rem, 3.4vw, 3rem)' }}
+              style={{ fontSize: 'clamp(1.5rem, 3.4vw, 3rem)' }}
             >
               THE SIX STUDY VOLUMES<span className="text-[#E8913C]">.</span>
             </h3>
           </div>
 
           {/* Steppers, Controls & Progress Indicator */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             {/* Quick volume jump pills */}
             <div className="hidden sm:flex items-center gap-1.5 bg-[#101317] p-1 rounded-full hairline-border">
               {studies.map((_, idx) => (
@@ -296,7 +296,7 @@ export function HorizontalScrollStudyTrack({
                 type="button"
                 onClick={() => advanceReel(-1)}
                 disabled={activeIndex === 0}
-                className="px-3 py-1 rounded-full bg-[#101317] hairline-border label-caps text-[10.5px] text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                className="px-3 py-1.5 sm:py-1 rounded-full bg-[#101317] hairline-border label-caps text-[10px] sm:text-[10.5px] text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer min-h-[36px] flex items-center"
                 title="Glide to previous study volume"
               >
                 ← PREV
@@ -305,7 +305,7 @@ export function HorizontalScrollStudyTrack({
                 type="button"
                 onClick={() => advanceReel(1)}
                 disabled={activeIndex === studies.length - 1}
-                className="px-3 py-1 rounded-full bg-[#101317] hairline-border label-caps text-[10.5px] text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                className="px-3 py-1.5 sm:py-1 rounded-full bg-[#101317] hairline-border label-caps text-[10px] sm:text-[10.5px] text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer min-h-[36px] flex items-center"
                 title="Glide to next study volume"
               >
                 NEXT →
@@ -313,9 +313,11 @@ export function HorizontalScrollStudyTrack({
             </div>
 
             {/* Scroll Progress Bar */}
-            <div className="flex items-center gap-2.5 pl-2">
-              <span className="label-caps text-[#9EA5A8] text-[10px]">SCROLL TO GLIDE</span>
-              <div className="w-28 sm:w-36 h-[2px] bg-[rgba(237,231,220,0.13)] relative overflow-hidden rounded-full">
+            <div className="flex items-center gap-2 pl-1 sm:pl-2">
+              <span className="label-caps text-[#9EA5A8] text-[9.5px] sm:text-[10px] hidden xs:inline">
+                SCROLL
+              </span>
+              <div className="w-20 sm:w-36 h-[2px] bg-[rgba(237,231,220,0.13)] relative overflow-hidden rounded-full">
                 <div
                   style={{
                     width: `${Math.max(8, scrollProgress * 100)}%`,
@@ -329,7 +331,7 @@ export function HorizontalScrollStudyTrack({
         </div>
 
         {/* Horizontal Moving Track */}
-        <div className="my-auto flex items-center overflow-hidden w-full">
+        <div className="my-auto flex items-center overflow-hidden w-full py-2">
           <div
             ref={trackRef}
             style={{
@@ -337,24 +339,26 @@ export function HorizontalScrollStudyTrack({
               willChange: 'transform',
               transition: 'transform 0.05s linear'
             }}
-            className="flex items-stretch gap-7 pl-4 sm:pl-10"
+            className="flex items-stretch gap-4 sm:gap-7 pl-2 sm:pl-8"
           >
             {studies.map((study, index) => (
               <div
                 key={study.id}
                 onClick={() => onSelectStudy(study)}
-                className="group w-[300px] sm:w-[390px] md:w-[410px] shrink-0 bg-[#101317] hairline-border hover:border-[#E8913C] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden rounded-sm drop-shadow-[0_16px_36px_rgba(0,0,0,0.6)]"
+                className="group w-[260px] sm:w-[380px] md:w-[410px] shrink-0 bg-[#101317] hairline-border hover:border-[#E8913C] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden rounded-sm drop-shadow-[0_16px_36px_rgba(0,0,0,0.6)]"
               >
                 {/* Top Bar */}
-                <div className="px-5 py-3.5 hairline-b bg-[#0A0C0E] flex items-center justify-between">
-                  <span className="label-caps text-[#E8913C]">
+                <div className="px-4 sm:px-5 py-2.5 sm:py-3.5 hairline-b bg-[#0A0C0E] flex items-center justify-between">
+                  <span className="label-caps text-[#E8913C] text-[10px] sm:text-[10.5px]">
                     VOL. 0{index + 1} / 0{studies.length}
                   </span>
-                  <span className="label-caps text-[#2E6B72]">{study.keyVerseRef}</span>
+                  <span className="label-caps text-[#2E6B72] text-[10px] sm:text-[10.5px]">
+                    {study.keyVerseRef}
+                  </span>
                 </div>
 
                 {/* Circular / Emblem Image */}
-                <div className="relative h-56 sm:h-64 overflow-hidden bg-[#0A0C0E] flex items-center justify-center p-4">
+                <div className="relative h-44 sm:h-60 overflow-hidden bg-[#0A0C0E] flex items-center justify-center p-3 sm:p-4">
                   <img
                     src={study.image}
                     alt={study.title}
@@ -364,23 +368,23 @@ export function HorizontalScrollStudyTrack({
                 </div>
 
                 {/* Copy */}
-                <div className="p-6 bg-[#0A0C0E] hairline-t flex-1 flex flex-col justify-between gap-4">
+                <div className="p-4 sm:p-6 bg-[#0A0C0E] hairline-t flex-1 flex flex-col justify-between gap-3 sm:gap-4">
                   <div>
-                    <div className="label-caps text-[#6C7378] mb-1">
+                    <div className="label-caps text-[#6C7378] text-[9.5px] sm:text-[10.5px] mb-1">
                       {study.greekOrHebrewTerm.transliteration}
                     </div>
-                    <h4 className="font-syne font-bold text-xl sm:text-2xl text-[#EDE7DC] group-hover:text-[#E8913C] transition-colors">
+                    <h4 className="font-syne font-bold text-lg sm:text-2xl text-[#EDE7DC] group-hover:text-[#E8913C] transition-colors line-clamp-1">
                       {study.title}
                     </h4>
-                    <p className="text-xs sm:text-sm text-[#9EA5A8] mt-2 line-clamp-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[#9EA5A8] mt-1.5 line-clamp-2 leading-relaxed">
                       {study.subtitle}
                     </p>
                   </div>
 
-                  <div className="pt-3 hairline-t flex items-center justify-between">
+                  <div className="pt-2 sm:pt-3 hairline-t flex items-center justify-between text-[10px] sm:text-[10.5px]">
                     <span className="label-caps text-[#9EA5A8]">{study.category}</span>
                     <span className="label-caps text-[#E8913C] group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                      OPEN STUDY GUIDE →
+                      OPEN GUIDE →
                     </span>
                   </div>
                 </div>
@@ -390,11 +394,11 @@ export function HorizontalScrollStudyTrack({
         </div>
 
         {/* Bottom Caption */}
-        <div className="w-full max-w-[1380px] mx-auto flex items-center justify-between pt-4 hairline-t">
-          <span className="label-caps text-[#6C7378]">
+        <div className="w-full max-w-[1380px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 sm:pt-4 hairline-t">
+          <span className="label-caps text-[#6C7378] text-[9.5px] sm:text-[10.5px] truncate max-w-full">
             TEST THE SPIRIT · PASTOR SHAHID HANIF &amp; PASTOR SANDESH SHALOM
           </span>
-          <span className="label-caps text-[#2E6B72]">
+          <span className="label-caps text-[#2E6B72] text-[9.5px] sm:text-[10.5px] hidden md:inline">
             CLICK ANY VOLUME CARD TO OPEN FULL EXEGESIS · USE CONTROLS OR SCROLL TO GLIDE
           </span>
         </div>

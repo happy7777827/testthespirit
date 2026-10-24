@@ -4,9 +4,10 @@
  */
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useSpring,
   useTransform,
@@ -88,6 +89,10 @@ export default function App() {
   const [motionOk, setMotionOk] = useState<boolean>(false);
   const [scrollY, setScrollY] = useState<number>(0);
   const [viewportH, setViewportH] = useState<number>(900);
+  const [viewportW, setViewportW] = useState<number>(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
+  const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
 
   // Interactive application state
   const [activeDeckIndex, setActiveDeckIndex] = useState<number>(0);
@@ -111,12 +116,13 @@ export default function App() {
     restDelta: 0.001
   });
 
-  // Detect prefers-reduced-motion and bind scroll listener
+  // Detect prefers-reduced-motion and bind scroll/resize listeners
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const isReduced = mq.matches;
     setMotionOk(!isReduced);
     setViewportH(window.innerHeight || 900);
+    setViewportW(window.innerWidth || 1200);
     setScrollY(window.scrollY || 0);
 
     const onScroll = () => {
@@ -124,6 +130,11 @@ export default function App() {
     };
     const onResize = () => {
       setViewportH(window.innerHeight || 900);
+      const w = window.innerWidth || 1200;
+      setViewportW(w);
+      if (w >= 768) {
+        setMobileNavOpen(false);
+      }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -133,6 +144,18 @@ export default function App() {
       window.removeEventListener('resize', onResize);
     };
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileNavOpen]);
 
   // One-way IntersectionObserver for non-hero entry reveals (fires once, never un-reveals)
   useEffect(() => {
@@ -207,36 +230,88 @@ export default function App() {
   );
 
   // Phase 3: Orbit carousel morphing inside the ellipse (0.33 -> 0.86)
-  // Calibrated with a subtle, refined zoom (230px) for ideal presence without overflowing
-  const targetRadius = 460;
+  // Responsive sizing calibrated for mobile (<768), tablet (<1024), and desktop
+  const isMobile = viewportW < 768;
+  const isTablet = viewportW < 1024;
+  const targetRadius = isMobile
+    ? 350
+    : isTablet
+    ? 330
+    : 460;
+  const initialItemSize = isMobile ? 95 : isTablet ? 72 : 92;
+  const focusedItemSize = isMobile ? 125 : isTablet ? 175 : 230;
+  const initialRx = isMobile ? 275 : isTablet ? 240 : 330;
+  const initialRy = isMobile ? 165 : isTablet ? 100 : 140;
+
+  // Scroll-driven item size transformation (zooming up as the user scrolls in)
   const orbitItemSize = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
-    [92, 230, 230, 92]
+    [0.28, 0.40, 0.80, 0.90],
+    [initialItemSize, focusedItemSize, focusedItemSize, initialItemSize]
   );
+  // Scroll-driven track expansion transformation (Position 1 ellipse -> Position 2 large circle)
   const orbitRx = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
-    [330, targetRadius, targetRadius, 330]
+    [0.28, 0.40, 0.80, 0.90],
+    [initialRx, targetRadius, targetRadius, initialRx]
   );
   const orbitRy = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
-    [140, targetRadius, targetRadius, 140]
+    [0.28, 0.40, 0.80, 0.90],
+    [initialRy, targetRadius, targetRadius, initialRy]
   );
   const orbitRotation = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
+    [0.28, 0.40, 0.80, 0.90],
     [-15, 0, 0, -15]
   );
+  // On mobile (<768px), shift the stage from 0vw (Position 1: centered ring) to -120vw (Position 2: 1 image visible) via media query
   const orbitTx = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
-    [0, -targetRadius, -targetRadius, 0]
+    [0.28, 0.40, 0.80, 0.90],
+    [0, isMobile ? 0 : -targetRadius, isMobile ? 0 : -targetRadius, 0]
   );
   const focusStrength = useTransform(
     heroProgress,
-    [0.34, 0.44, 0.78, 0.86],
+    [0.28, 0.40, 0.80, 0.90],
+    [0, 1, 1, 0]
+  );
+
+  // Scroll-driven zoom / scale for the entire hero orbit stage
+  const orbitStageScale = useTransform(
+    heroProgress,
+    [0.28, 0.40, 0.80, 0.90],
+    [isMobile ? 0.90 : 0.85, isMobile ? 2.45 : 1.05, isMobile ? 2.45 : 1.05, isMobile ? 0.90 : 0.88]
+  );
+
+  // Mobile scroll-driven transition:
+  // Position 1 (0.17 -> 0.28): shifted slightly left (-7vw) at 0.90x scale on a 100vw stage so all orbiting images frame the title symmetrically
+  // Position 2 (0.40 -> 0.80): zoomed in (2.45x) and shifted left (-120vw) so only 1 focused orbiting image is viewed while scrolling
+  const mobileScrollZoom = useTransform(
+    heroProgress,
+    [0.28, 0.40, 0.80, 0.90],
+    [0.90, 2.45, 2.45, 0.90]
+  );
+  const mobileOrbitLeft = useTransform(
+    heroProgress,
+    [0.28, 0.40, 0.80, 0.90],
+    ['-7vw', '-120vw', '-120vw', '-7vw']
+  );
+  const mobileMedallionZoom = useTransform(
+    heroProgress,
+    [0.28, 0.40, 0.80, 0.90],
+    [1.0, 1.24, 1.24, 1.0]
+  );
+  // 0px blur while orbiting so images are seen clearly; blurs out only when finished orbiting (0.84 -> 0.95)
+  const mobileOrbitBlurVal = useTransform(
+    heroProgress,
+    [0, 0.84, 0.95],
+    [0, 0, 16]
+  );
+  const mobileOrbitBlur = useMotionTemplate`blur(${mobileOrbitBlurVal}px)`;
+  const mobileOrbitOpacity = useTransform(
+    heroProgress,
+    [0.16, 0.20, 0.85, 0.95],
     [0, 1, 1, 0]
   );
 
@@ -303,15 +378,18 @@ export default function App() {
           FIXED 58PX NAVIGATION BAR (3-Zone Contract, 14px Blur, Hairline Bottom)
       ====================================================================== */}
       <header
-        className="fixed top-0 inset-x-0 z-50 h-[58px] bg-[#0A0C0E]/75 hairline-b flex items-center"
-        style={{ backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
+        className="site-header fixed top-0 inset-x-0 z-[100] h-[58px] bg-[#0A0C0E]/90 hairline-b flex items-center"
       >
-        <div className="w-full max-w-[1380px] mx-auto px-6 flex items-center justify-between gap-8">
+        <div
+          className="header-bar w-full h-full max-w-[1380px] mx-auto px-6 flex items-center justify-between gap-8"
+          style={{ backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
+        >
           {/* Zone 1: Display wordmark at 15px with trailing period in amber */}
           <a
             href="#portal-hero"
             onClick={(e) => {
               e.preventDefault();
+              setMobileNavOpen(false);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="flex items-center gap-2.5 font-syne font-extrabold text-[15px] tracking-[-0.025em] text-[#EDE7DC] whitespace-nowrap shrink-0 group"
@@ -324,7 +402,7 @@ export default function App() {
             <span>TEST THE SPIRIT<span className="text-[#E8913C]">.</span></span>
           </a>
 
-          {/* Zone 2: 6 single-line uppercase links at 10.5px turning amber on hover */}
+          {/* Zone 2: 8 single-line uppercase links at 10.5px turning amber on hover */}
           <nav aria-label="Primary Navigation" className="hidden md:flex items-center gap-8">
             {[
               { label: 'Home', id: 'portal-hero' },
@@ -350,20 +428,158 @@ export default function App() {
             ))}
           </nav>
 
-          {/* Zone 3: 1 pill button (no filled accent area) */}
-          <div className="shrink-0">
+          {/* Zone 3: Desktop pill button + Mobile hamburger toggle */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={() => {
                 setActivePillarForModal(FEATURE_PILLARS[0]);
                 setStudyPlanModalOpen(true);
               }}
-              className="px-4 py-1.5 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="hidden sm:inline-block px-4 py-1.5 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               GET STARTED
             </button>
+
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((prev) => !prev)}
+              aria-label={mobileNavOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+              aria-expanded={mobileNavOpen}
+              aria-controls="mobile-navigation-drawer"
+              className="mobile-menu-btn md:hidden w-10 h-10 flex items-center justify-center rounded-lg hairline-border bg-[#101317]/90 text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer relative z-[110]"
+            >
+              {mobileNavOpen ? (
+                <X className="w-5 h-5 text-[#E8913C] shrink-0" />
+              ) : (
+                <Menu className="w-5 h-5 text-[#EDE7DC] shrink-0" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer Modal Overlay */}
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.div
+              id="mobile-navigation-drawer"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="mobile-nav-drawer fixed inset-x-0 top-[58px] bottom-0 z-[105] bg-[#0A0C0E]/98 backdrop-blur-2xl hairline-t overflow-y-auto p-5 sm:p-6 flex flex-col justify-between md:hidden"
+            >
+              <div className="mobile-nav-body space-y-3">
+                <div className="mobile-nav-header flex items-center justify-between pb-2.5 hairline-b">
+                  <span className="label-caps text-[#E8913C]">
+                    NAVIGATION DIRECTORY
+                  </span>
+                  <span className="label-caps text-[#6C7378]">
+                    BEREAN ARCHIVE
+                  </span>
+                </div>
+
+                <nav aria-label="Mobile Navigation" className="mobile-nav-list grid grid-cols-1 gap-2">
+                  {[
+                    { label: 'Home', id: 'portal-hero', desc: 'Interactive Discernment Orbit' },
+                    { label: 'Mission', id: 'statement-fold', desc: '1 Thessalonians 5:21' },
+                    { label: 'Spiritual Goal', id: 'spiritual-goal', desc: 'Romans 7 & 8 · United in Elohim' },
+                    { label: 'Pastor Shahid', id: 'pastor-greeting', desc: '“Shalom in the Messiah”' },
+                    { label: 'Bible Studies', id: 'study-archive', desc: '06 Foundational Volumes' },
+                    { label: 'Discernment', id: 'pillars-roster', desc: 'Berean Standard Pillars' },
+                    { label: 'Scripture', id: 'scripture-evidence', desc: 'Manuscript Evidence' },
+                    { label: 'Contact', id: 'contact', desc: 'Direct Ministerial Inbox' }
+                  ].map((link, idx) => (
+                    <a
+                      key={link.id}
+                      href={`#${link.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setMobileNavOpen(false);
+                        scrollToSection(link.id);
+                      }}
+                      className="mobile-nav-link flex items-center justify-between p-3 rounded-lg hairline-border hover:border-[#E8913C] bg-[#101317] transition-colors group"
+                    >
+                      <div className="min-w-0 pr-3">
+                        <div className="mobile-nav-link-title font-syne font-bold text-sm text-[#EDE7DC] group-hover:text-[#E8913C] transition-colors">
+                          {link.label}
+                        </div>
+                        <div className="mobile-nav-link-desc label-caps text-[#9EA5A8] text-[9.5px] mt-0.5 truncate">
+                          {link.desc}
+                        </div>
+                      </div>
+                      <span className="mobile-nav-link-index label-caps text-[#E8913C] text-[11px] shrink-0">
+                        0{idx + 1} →
+                      </span>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+
+              <div className="mobile-nav-footer pt-4 mt-4 hairline-t space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileNavOpen(false);
+                    setActivePillarForModal(FEATURE_PILLARS[0]);
+                    setStudyPlanModalOpen(true);
+                  }}
+                  className="mobile-nav-cta w-full py-3.5 rounded-full bg-[#E8913C] text-[#0A0C0E] font-syne font-bold text-xs uppercase tracking-wider text-center cursor-pointer shadow-md"
+                >
+                  GET STARTED · STUDY PLAN
+                </button>
+
+                <div className="mobile-nav-socials flex items-center justify-center gap-6 pt-1 text-[#9EA5A8]">
+                  <a
+                    href="https://www.youtube.com/@testthespirit"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="YouTube Channel"
+                    className="p-2 hover:text-[#E8913C] transition-colors"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.facebook.com/holy.zion1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="p-2 hover:text-[#E8913C] transition-colors"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.instagram.com/shahid.hanif777/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="p-2 hover:text-[#E8913C] transition-colors"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.tiktok.com/@shahidhanif474/video/7544945748958285078"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="TikTok"
+                    className="p-2 hover:text-[#E8913C] transition-colors"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Thin 1px Amber Scroll Progress Rule on Bottom Hairline of Header */}
         {motionOk && (
@@ -386,7 +602,7 @@ export default function App() {
           aria-label="Test the Spirit Hero and Orbital Study Exploration"
           className="relative h-[650vh] bg-[#0A0C0E]"
         >
-          <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
+          <div className="sticky top-0 h-screen w-full overflow-hidden isolate hero-sticky-frame">
             {/* Layer 1 (Back): Looping Hero Video - always running, revealed as doors part */}
             <motion.div
               className="absolute inset-0 z-[10] flex items-center justify-center bg-[#0A0C0E]"
@@ -396,13 +612,22 @@ export default function App() {
               }}
             >
               <video
+                src="/assets/aistudio/5e2c97c8-fc7e-427f-b53b-7f25c799d445_cc6c68f9.mp4"
+                poster="/assets/aistudio/file_0000000012ac8211860ec8fae52f06e3_ad643363.png"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover object-center block sm:hidden"
+              />
+              <video
                 src="/assets/aistudio/gemini_generated_video_e00cb7d9_4f498c19.mp4"
                 poster="/assets/aistudio/file_0000000012ac8211860ec8fae52f06e3_ad643363.png"
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center hidden sm:block"
               />
             </motion.div>
 
@@ -486,15 +711,15 @@ export default function App() {
 
             {/* Layer 6: Initial Portal Title on closed doors (splits apart and fades out) */}
             <motion.div
-              className="pointer-events-none absolute inset-x-0 top-[18%] sm:top-[16%] z-[33] flex flex-col items-center justify-center px-6"
+              className="pointer-events-none absolute inset-x-0 top-[22%] sm:top-[16%] z-[33] flex flex-col items-center justify-center px-4 sm:px-6"
               style={{
                 opacity: initialTitleOpacity
               }}
             >
               <h1
-                className="font-syne font-extrabold uppercase text-[#EDE7DC] flex items-center justify-center gap-3 sm:gap-5 whitespace-nowrap select-none"
+                className="font-syne font-extrabold uppercase text-[#EDE7DC] flex items-center justify-center gap-2 sm:gap-5 whitespace-nowrap select-none"
                 style={{
-                  fontSize: 'clamp(1.75rem, 4.2vw, 4.25rem)',
+                  fontSize: 'clamp(1.35rem, 5.5vw, 4.25rem)',
                   letterSpacing: '-0.02em'
                 }}
               >
@@ -505,14 +730,14 @@ export default function App() {
                   SPIRIT<span className="text-[#E8913C]">.</span>
                 </motion.span>
               </h1>
-              <p className="mt-3 text-xs sm:text-sm text-[#9EA5A8] tracking-wide text-center uppercase">
+              <p className="mt-2 sm:mt-3 text-[10.5px] sm:text-sm text-[#9EA5A8] tracking-wide text-center uppercase max-w-xs sm:max-w-none">
                 Examine Every Teaching · Search the Scriptures · Hold Fast to the Truth
               </p>
             </motion.div>
 
             {/* Layer 7: Expanding Rotated Elliptical Portal Layer Unveiling the OrbitImages Stage (0.17 -> 0.95) */}
             <motion.div
-              className="absolute z-[35] flex items-center justify-center overflow-hidden"
+              className="absolute z-[35] flex items-center justify-center overflow-hidden hero-ellipse-layer"
               style={{
                 clipPath: ellipseClipPath,
                 rotate: -15,
@@ -529,7 +754,19 @@ export default function App() {
                 className="relative flex flex-col items-center justify-center"
                 style={{ width: '100vw', height: '100vh', transform: 'rotate(15deg)' }}
               >
-                <motion.div className="w-[90vw] max-w-[1200px] aspect-square relative z-0">
+                <motion.div
+                  style={{
+                    scale: orbitStageScale,
+                    ['--mobile-orbit-zoom' as any]: mobileScrollZoom,
+                    ['--mobile-orbit-left' as any]: mobileOrbitLeft,
+                    ['--mobile-item-zoom' as any]: mobileMedallionZoom,
+                    ['--mobile-orbit-blur' as any]: mobileOrbitBlur,
+                    ['--mobile-orbit-opacity' as any]: mobileOrbitOpacity,
+                    transformOrigin: 'center center',
+                    willChange: 'transform, filter, opacity'
+                  }}
+                  className="w-[90vw] max-w-[1200px] aspect-square relative z-0 hero-orbit-stage"
+                >
                   <OrbitImages
                     images={ORBIT_IMAGES}
                     labels={ORBIT_LABELS}
@@ -573,11 +810,11 @@ export default function App() {
                   }}
                 >
                   <div className="flex items-baseline text-[#0A0C0E] leading-none mb-1">
-                    <span className="font-syne font-extrabold text-[34px] md:text-[50px] tracking-[-0.03em] text-[#0A0C0E]">
+                    <span className="font-syne font-extrabold text-[22px] sm:text-[34px] md:text-[50px] tracking-[-0.03em] text-[#0A0C0E]">
                       Test the Spirit<span className="text-[#E8913C]">.</span>
                     </span>
                   </div>
-                  <span className="font-sora text-[16px] md:text-[22px] tracking-[0.08em] uppercase text-[#2E6B72] mt-1 font-semibold">
+                  <span className="font-sora text-[11px] sm:text-[16px] md:text-[22px] tracking-[0.08em] uppercase text-[#2E6B72] mt-0.5 sm:mt-1 font-semibold">
                     Search the Scriptures
                   </span>
                 </motion.div>
@@ -585,13 +822,13 @@ export default function App() {
 
               {/* Top-Right Scripture Callout */}
               <motion.div
-                className="absolute top-24 right-[6vw] md:right-[140px] flex flex-col items-start text-left pointer-events-auto"
+                className="hidden sm:flex absolute top-16 sm:top-24 right-4 sm:right-[6vw] md:right-[140px] flex-col items-start text-left pointer-events-auto"
                 style={{ y: ellipseTextY, filter: ellipseFilterText, opacity: ellipseTextOpacity }}
               >
-                <span className="font-syne font-extrabold text-[28px] md:text-[36px] leading-none mb-2 text-[#0A0C0E]">
+                <span className="font-syne font-extrabold text-[20px] sm:text-[28px] md:text-[36px] leading-none mb-1 sm:mb-2 text-[#0A0C0E]">
                   1 JOHN 4:1
                 </span>
-                <span className="label-caps text-[#0A0C0E]/80 leading-[18px] text-left">
+                <span className="label-caps text-[#0A0C0E]/80 text-[9px] sm:text-[10.5px] leading-tight sm:leading-[18px] text-left">
                   TRY THE SPIRITS
                   <br />
                   WHETHER OF GOD
@@ -600,19 +837,19 @@ export default function App() {
 
               {/* Bottom-Left Archive Count Callout */}
               <motion.div
-                className="absolute bottom-10 left-8 md:bottom-16 md:left-16 flex flex-col items-start text-[#0A0C0E] pointer-events-auto"
+                className="absolute bottom-6 sm:bottom-10 md:bottom-16 left-4 sm:left-8 md:left-16 flex flex-col items-start text-[#0A0C0E] pointer-events-auto"
                 style={{ y: ellipseTextY, filter: ellipseFilterText, opacity: ellipseTextOpacity }}
               >
-                <span className="font-syne font-extrabold text-[32px] md:text-[40px] leading-none mb-1 text-[#0A0C0E] tabular-nums">
+                <span className="font-syne font-extrabold text-[22px] sm:text-[32px] md:text-[40px] leading-none mb-0.5 sm:mb-1 text-[#0A0C0E] tabular-nums">
                   05 SEALS
                 </span>
-                <span className="label-caps text-[#2E6B72]">DOCTRINAL DISCERNMENT MEDALLIONS</span>
+                <span className="label-caps text-[#2E6B72] text-[9px] sm:text-[10.5px]">DOCTRINAL DISCERNMENT</span>
               </motion.div>
 
               {/* Bottom-Right Verse & Dual Action Buttons */}
-              <div className="absolute bottom-12 right-[6vw] md:right-[8vw] flex flex-col items-start z-10 pointer-events-auto">
+              <div className="absolute bottom-6 sm:bottom-12 right-4 sm:right-[6vw] md:right-[8vw] flex flex-col items-start z-10 pointer-events-auto">
                 <motion.p
-                  className="label-caps text-[#0A0C0E] leading-[18px] mb-5 text-left w-[250px]"
+                  className="hidden sm:block label-caps text-[#0A0C0E] leading-[18px] mb-4 text-left w-[240px]"
                   style={{ y: ellipseTextY, filter: ellipseFilterText, opacity: ellipseTextOpacity }}
                 >
                   “PROVE ALL THINGS; HOLD FAST THAT WHICH IS GOOD.” — 1 THESSALONIANS 5:21
@@ -624,7 +861,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => scrollToSection('study-archive')}
-                    className="rounded-full bg-[#0A0C0E] text-[#EDE7DC] hover:text-[#E8913C] px-5 py-2.5 label-caps transition-all cursor-pointer border border-[#0A0C0E]"
+                    className="rounded-full bg-[#0A0C0E] text-[#EDE7DC] hover:text-[#E8913C] px-3.5 py-2 sm:px-5 sm:py-2.5 label-caps text-[10px] sm:text-[10.5px] transition-all cursor-pointer border border-[#0A0C0E] whitespace-nowrap shrink-0"
                   >
                     EXPLORE ARCHIVE
                   </button>
@@ -634,16 +871,16 @@ export default function App() {
                       if (STUDY_ARCHIVE[0]) setSelectedStudy(STUDY_ARCHIVE[0]);
                     }}
                     aria-label="Open Vol. 01 Study Guide"
-                    className="w-10 h-10 rounded-full border border-[#0A0C0E] flex items-center justify-center text-[#0A0C0E] hover:border-[#E8913C] hover:text-[#E8913C] transition-all cursor-pointer"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-[#0A0C0E] flex items-center justify-center text-[#0A0C0E] hover:border-[#E8913C] hover:text-[#E8913C] transition-all cursor-pointer shrink-0"
                   >
-                    <span className="font-syne font-bold text-sm">→</span>
+                    <span className="font-syne font-bold text-xs sm:text-sm">→</span>
                   </button>
                 </motion.div>
               </div>
             </div>
 
             {/* Layer 9: Persistent Corner Metadata */}
-            <div className="pointer-events-none absolute top-[74px] left-6 right-6 z-[50] flex items-center justify-between">
+            <div className="pointer-events-none absolute top-[64px] sm:top-[74px] left-4 sm:left-6 right-4 sm:right-6 z-[48] flex items-center justify-between text-[9.5px] sm:text-[10.5px]">
               <div className="label-caps text-[#9EA5A8]">
                 <span className="text-[#E8913C]">1 JOHN 4:1</span> · TRY THE SPIRITS
               </div>
@@ -652,12 +889,12 @@ export default function App() {
               </div>
             </div>
 
-            <div className="pointer-events-none absolute bottom-5 left-6 right-6 z-[50] flex items-center justify-between">
-              <div className="label-caps text-[#6C7378]">
+            <div className="pointer-events-none absolute bottom-3 sm:bottom-5 left-4 sm:left-6 right-4 sm:right-6 z-[48] flex items-center justify-between text-[9.5px] sm:text-[10.5px]">
+              <div className="label-caps text-[#6C7378] truncate max-w-[200px] sm:max-w-none">
                 LED BY PASTOR SHAHID HANIF &amp; PASTOR SANDESH SHALOM
               </div>
-              <div className="label-caps text-[#E8913C]">
-                SCROLL TO NAVIGATE STAGE ↓
+              <div className="label-caps text-[#E8913C] shrink-0">
+                SCROLL ↓
               </div>
             </div>
           </div>
@@ -1287,21 +1524,21 @@ export default function App() {
                   />
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => {
                       setActivePillarForModal(FEATURE_PILLARS[0]);
                       setStudyPlanModalOpen(true);
                     }}
-                    className="px-6 py-3 rounded-full bg-transparent border border-[#E8913C] label-caps text-[#E8913C] hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-transparent border border-[#E8913C] label-caps text-[#E8913C] hover:text-[#EDE7DC] hover:border-[#EDE7DC] transition-colors cursor-pointer text-center justify-center flex items-center"
                   >
                     BEGIN YOUR SCRIPTURE STUDY
                   </button>
                   <button
                     type="button"
                     onClick={() => scrollToSection('study-archive')}
-                    className="px-6 py-3 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer text-center justify-center flex items-center"
                   >
                     EXPLORE ARCHIVE
                   </button>

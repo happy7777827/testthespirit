@@ -186,19 +186,19 @@ export function ThrowableStudyDeck({
                 zIndex: items.length - stackPos,
                 touchAction: 'pan-y'
               }}
-              className={`absolute inset-4 bg-[#101317] hairline-border deck-card-shadow flex flex-col justify-between overflow-hidden ${
+              className={`absolute inset-2 sm:inset-4 bg-[#101317] hairline-border deck-card-shadow flex flex-col justify-between overflow-hidden ${
                 isTop ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
               }`}
             >
               {/* Top Sleeve Header Bar */}
-              <div className="flex items-center justify-between px-4 py-3 hairline-b bg-[#0A0C0E]">
+              <div className="flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 hairline-b bg-[#0A0C0E]">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#E8913C]" />
-                  <span className="label-caps text-[#9EA5A8]">
+                  <span className="label-caps text-[#9EA5A8] text-[9.5px] sm:text-[10.5px]">
                     ARCHIVE VOL. 0{originalIdx + 1}
                   </span>
                 </div>
-                <span className="label-caps text-[#E8913C]">{item.keyVerseRef}</span>
+                <span className="label-caps text-[#E8913C] text-[9.5px] sm:text-[10.5px]">{item.keyVerseRef}</span>
               </div>
 
               {/* Sleeve Artwork */}
@@ -213,9 +213,9 @@ export function ThrowableStudyDeck({
               </div>
 
               {/* Bottom Sleeve Information */}
-              <div className="p-4 sm:p-5 bg-[#0A0C0E] hairline-t flex flex-col justify-between gap-2">
+              <div className="p-3 sm:p-5 bg-[#0A0C0E] hairline-t flex flex-col justify-between gap-1.5 sm:gap-2">
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-syne font-bold text-lg sm:text-xl text-[#EDE7DC] leading-tight">
+                  <h3 className="font-syne font-bold text-base sm:text-xl text-[#EDE7DC] leading-tight">
                     {item.title}
                   </h3>
                   <span className="label-caps text-[#2E6B72] shrink-0">{item.category}</span>
