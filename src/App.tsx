@@ -241,24 +241,27 @@ export default function App() {
   const ellipseContainerOpacity = useTransform(heroProgress, [0.16, 0.18, 0.95, 1.0], [0, 1, 1, 0]);
 
   // Typography inside the ellipse: Blur & opacity choreography
+  const ellipseTextKeyframes = isMobile
+    ? [0.20, 0.25, 0.28, 0.33, 0.88, 0.93, 0.97]
+    : [0.20, 0.27, 0.33, 0.40, 0.82, 0.90, 0.95];
   const ellipseTextOpacity = useTransform(
     heroProgress,
-    [0.20, 0.27, 0.33, 0.40, 0.82, 0.90, 0.95],
+    ellipseTextKeyframes,
     [0, 1, 1, 0, 0, 1, 0]
   );
   const ellipseTextBlurVal = useTransform(
     heroProgress,
-    [0.20, 0.27, 0.33, 0.40, 0.82, 0.90, 0.95],
+    ellipseTextKeyframes,
     [15, 0, 0, 15, 15, 0, 0]
   );
   const ellipseFilterText = useMotionTemplate`blur(${ellipseTextBlurVal}px)`;
   const ellipseTextY = useTransform(
     heroProgress,
-    [0.20, 0.27, 0.33, 0.40, 0.82, 0.90, 0.95],
+    ellipseTextKeyframes,
     [20, 0, 0, 20, 20, 0, 0]
   );
 
-  // Phase 3: Orbit carousel morphing inside the ellipse (0.28 -> 0.86)
+  // Phase 3: Orbit carousel morphing inside the ellipse
   const targetRadius = isMobile
     ? 350
     : isTablet
@@ -269,75 +272,79 @@ export default function App() {
   const initialRx = isMobile ? 275 : isTablet ? 240 : 330;
   const initialRy = isMobile ? 165 : isTablet ? 100 : 140;
 
+  const orbitMorphKeyframes = isMobile
+    ? [0.26, 0.33, 0.88, 0.94]
+    : [0.26, 0.37, 0.82, 0.90];
+
   // Scroll-driven item size transformation (zooming up as the user scrolls in)
   const orbitItemSize = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [initialItemSize, focusedItemSize, focusedItemSize, initialItemSize]
   );
   // Scroll-driven track expansion transformation (Position 1 ellipse -> Position 2 large circle)
   const orbitRx = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [initialRx, targetRadius, targetRadius, initialRx]
   );
   const orbitRy = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [initialRy, targetRadius, targetRadius, initialRy]
   );
   const orbitRotation = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [-15, 0, 0, -15]
   );
   // On mobile (<768px), shift the stage from -7vw (Position 1: centered ring) to -120vw (Position 2: 1 image visible) via media query
   const orbitTx = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [0, isMobile ? 0 : -targetRadius, isMobile ? 0 : -targetRadius, 0]
   );
   const focusStrength = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [0, 1, 1, 0]
   );
 
   // Scroll-driven zoom / scale for the entire hero orbit stage
   const orbitStageScale = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    orbitMorphKeyframes,
     [isMobile ? 0.90 : 0.85, isMobile ? 2.45 : 1.05, isMobile ? 2.45 : 1.05, isMobile ? 0.90 : 0.88]
   );
 
   // Mobile scroll-driven transition:
   // Position 1 (0.17 -> 0.26): shifted slightly left (-7vw) at 0.90x scale on a 100vw stage so all orbiting images frame the title symmetrically
-  // Position 2 (0.37 -> 0.82): zoomed in (2.45x) and shifted left (-120vw) so only 1 focused orbiting image is viewed while scrolling
+  // Position 2 (0.33 -> 0.88): zoomed in (2.45x) and shifted left (-120vw) so all 5 focused orbiting images are viewed clearly one by one before zooming/blurring out
   const mobileScrollZoom = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    [0.26, 0.33, 0.88, 0.94],
     [0.90, 2.45, 2.45, 0.90]
   );
   const mobileOrbitLeft = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    [0.26, 0.33, 0.88, 0.94],
     ['-7vw', '-120vw', '-120vw', '-7vw']
   );
   const mobileMedallionZoom = useTransform(
     heroProgress,
-    [0.26, 0.37, 0.82, 0.90],
+    [0.26, 0.33, 0.88, 0.94],
     [1.0, 1.24, 1.24, 1.0]
   );
-  // 0px blur while orbiting so images are seen clearly; blurs out only when finished orbiting (0.84 -> 0.95)
+  // 0px blur while orbiting so all 5 images are seen clearly; blurs out only after the 5th image has been shown (0.90 -> 0.97)
   const mobileOrbitBlurVal = useTransform(
     heroProgress,
-    [0, 0.84, 0.95],
+    [0, 0.90, 0.97],
     [0, 0, 16]
   );
   const mobileOrbitBlur = useMotionTemplate`blur(${mobileOrbitBlurVal}px)`;
   const mobileOrbitOpacity = useTransform(
     heroProgress,
-    [0.16, 0.20, 0.85, 0.95],
+    [0.16, 0.20, 0.91, 0.97],
     [0, 1, 1, 0]
   );
 
@@ -352,11 +359,11 @@ export default function App() {
     let frameSpeed = 0;
 
     if (isMobile) {
-      // On mobile: slightly faster than normal (320 vs 220) with smooth continuous glide
-      if (pos > 0.26 && pos < 0.86) {
-        frameSpeed = scrollDelta * 320 + dt * 2.8;
+      // On mobile: advance ~94 units across (0.30 -> 0.86) so all 5 images (0, 20, 40, 60, 80) pass through the focal point clearly while zoomed in before any blur at 0.90
+      if (pos > 0.30 && pos < 0.86) {
+        frameSpeed = scrollDelta * 168;
       } else {
-        frameSpeed = scrollDelta * 140 + dt * 3.0;
+        frameSpeed = dt * 2.5;
       }
     } else {
       if (pos > 0.30 && pos < 0.85) {
