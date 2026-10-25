@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Maximize2, X, ExternalLink, MessageSquare, BookOpen, Sparkles, Check, Copy } from 'lucide-react';
 
@@ -13,6 +13,15 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
 }) => {
   const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
   const [copiedScripture, setCopiedScripture] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isPosterModalOpen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsPosterModalOpen(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isPosterModalOpen]);
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -75,6 +84,8 @@ export const PastorGreetingSection: React.FC<PastorGreetingSectionProps> = ({
                 <img
                   src="/assets/aistudio/Shalom_in_the_Messiah_Lecture_Poster_31435eb6.png"
                   alt="Pastor Shahid Hanif - Shalom in the Messiah poster"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-auto object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out cursor-pointer"
                   onClick={() => setIsPosterModalOpen(true)}
                 />

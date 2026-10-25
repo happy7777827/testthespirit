@@ -32,6 +32,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
         <img
           src="/assets/aistudio/cropped_circle_image__5__dbeb9244.png"
           alt="Love for One Another Seal"
+          loading="lazy"
+          decoding="async"
           referrerPolicy="no-referrer"
           className="w-full h-full object-contain"
         />
@@ -89,7 +91,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ motionOk }) => {
                 </a>
               </p>
               <p className="text-xs text-[#6C7378]">
-                Led by Pastor Shahid Hanif &amp; Pastor Sandesh Shalom
+                Led by Pastor Shahid Hanif
               </p>
             </div>
 

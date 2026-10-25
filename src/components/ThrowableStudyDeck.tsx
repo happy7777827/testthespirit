@@ -206,6 +206,8 @@ export function ThrowableStudyDeck({
                 <img
                   src={item.image}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   draggable={false}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-top pointer-events-none"

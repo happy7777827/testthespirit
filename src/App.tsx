@@ -155,15 +155,22 @@ export default function App() {
     };
   }, []);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll and support Escape key when mobile menu is open
   useEffect(() => {
     if (mobileNavOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileNavOpen) {
+        setMobileNavOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleEsc);
     };
   }, [mobileNavOpen]);
 
@@ -922,7 +929,7 @@ export default function App() {
 
             <div className="pointer-events-none absolute bottom-3 sm:bottom-5 left-4 sm:left-6 right-4 sm:right-6 z-[48] flex items-center justify-between text-[9.5px] sm:text-[10.5px]">
               <div className="label-caps text-[#6C7378] truncate max-w-[200px] sm:max-w-none">
-                LED BY PASTOR SHAHID HANIF &amp; PASTOR SANDESH SHALOM
+                LED BY PASTOR SHAHID HANIF
               </div>
               <div className="label-caps text-[#E8913C] shrink-0">
                 SCROLL ↓
@@ -956,6 +963,8 @@ export default function App() {
             <img
               src="/assets/aistudio/cropped_circle_image__3__863518da.png"
               alt="Exaltation of God Tetragrammaton Seal"
+              loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               className="w-full h-full object-contain"
             />
@@ -996,7 +1005,7 @@ export default function App() {
                   </p>
                   <div className="space-y-3">
                     <p className="text-sm text-[#EDE7DC] leading-relaxed">
-                      “Led by Pastor Shahid Hanif &amp; Pastor Sandesh Shalom”
+                      “Led by Pastor Shahid Hanif”
                     </p>
                     <div className="label-caps text-[#2E6B72]">
                       GROUNDED IN SCRIPTURE · GUIDED BY TRUTH
@@ -1241,6 +1250,8 @@ export default function App() {
                       <img
                         src={study.image}
                         alt={study.title}
+                        loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         className="w-11 h-11 object-cover hairline-border shrink-0 group-hover:scale-105 transition-transform"
                       />
@@ -1340,6 +1351,8 @@ export default function App() {
                 <img
                   src="/assets/aistudio/evidence_book_thumb.png"
                   alt="Open Bible Manuscript"
+                  loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover opacity-55 group-hover:scale-105 transition-transform"
                 />
@@ -1382,6 +1395,8 @@ export default function App() {
                 <img
                   src="/assets/aistudio/evidence_scroll_thumb.png"
                   alt="Ancient Torah Scroll"
+                  loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover opacity-55 group-hover:scale-105 transition-transform"
                 />
@@ -1539,8 +1554,7 @@ export default function App() {
                 </h2>
                 <p className="text-xs sm:text-sm text-[#9EA5A8] max-w-lg leading-relaxed">
                   Return to Scripture. Examine the context. Seek truth with humility. Grounded in
-                  Scripture. Guided by Truth. Led by Pastor Shahid Hanif &amp; Pastor Sandesh
-                  Shalom.
+                  Scripture. Guided by Truth. Led by Pastor Shahid Hanif.
                 </p>
               </div>
 
@@ -1550,6 +1564,8 @@ export default function App() {
                   <img
                     src="/assets/aistudio/cta_open_bible.png"
                     alt="Illuminated open Holy Bible"
+                    loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-right"
                   />
@@ -1583,6 +1599,8 @@ export default function App() {
                 <img
                   src="/assets/aistudio/nav_cross_logo.png"
                   alt="Cross Emblem"
+                  loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="h-5 w-auto object-contain opacity-80"
                 />
@@ -1614,7 +1632,7 @@ export default function App() {
               </div>
 
               <div className="label-caps text-[#6C7378]">
-                PASTOR SHAHID HANIF &amp; PASTOR SANDESH SHALOM
+                PASTOR SHAHID HANIF
               </div>
             </div>
 

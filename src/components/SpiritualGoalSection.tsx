@@ -107,6 +107,8 @@ export const SpiritualGoalSection: React.FC<SpiritualGoalSectionProps> = ({
         <img
           src="/assets/aistudio/cropped_circle_image__4__21809b77.png"
           alt="Spiritual Discernment Emblem"
+          loading="lazy"
+          decoding="async"
           referrerPolicy="no-referrer"
           className="w-full h-full object-contain"
         />

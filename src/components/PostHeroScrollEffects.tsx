@@ -373,6 +373,8 @@ export function HorizontalScrollStudyTrack({
                   <img
                     src={study.image}
                     alt={study.title}
+                    loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   />
@@ -407,7 +409,7 @@ export function HorizontalScrollStudyTrack({
         {/* Bottom Caption */}
         <div className="w-full max-w-[1380px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 sm:pt-4 hairline-t">
           <span className="label-caps text-[#6C7378] text-[9.5px] sm:text-[10.5px] truncate max-w-full">
-            TEST THE SPIRIT · PASTOR SHAHID HANIF &amp; PASTOR SANDESH SHALOM
+            TEST THE SPIRIT · PASTOR SHAHID HANIF
           </span>
           <span className="label-caps text-[#2E6B72] text-[9.5px] sm:text-[10.5px] hidden md:inline">
             CLICK ANY VOLUME CARD TO OPEN FULL EXEGESIS · USE CONTROLS OR SCROLL TO GLIDE

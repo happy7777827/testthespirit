@@ -176,15 +176,23 @@
 }
 
 /* ============================================================================
-   RESPONSIVE MEDIA QUERIES (MOBILE PHONE & TABLET BREAKPOINTS)
-   Only media queries are used to enhance and guarantee mobile responsiveness
+   MOBILE-ONLY RESPONSIVE MEDIA QUERIES (320px – 767px ONLY)
+   CRITICAL RULE: Tablet (768px+) and Desktop (1024px+) are 100% untouched.
+   Primary boundary is strictly @media screen and (max-width: 767px).
 ============================================================================ */
 
 /* ----------------------------------------------------------------------------
-   1. TABLET & MOBILE VIEWPORTS (max-width: 768px)
+   1. ALL MOBILE PHONES (320px – 767px)
 ---------------------------------------------------------------------------- */
-@media (max-width: 768px) {
-  /* Whole-page smooth momentum scrolling & horizontal blowout prevention on mobile */
+@media screen and (max-width: 767px) {
+  /* Universal mobile box-sizing & flex/grid child shrink protection */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Whole-page smooth momentum scrolling & horizontal overflow prevention */
   html {
     max-width: 100vw !important;
     overflow-x: clip !important;
@@ -192,6 +200,8 @@
     scroll-padding-top: 56px !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: auto !important;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -209,9 +219,57 @@
   footer {
     scroll-margin-top: 56px !important;
     touch-action: pan-y !important;
+    max-width: 100vw;
   }
 
-  /* Smooth GPU-accelerated interpolation for all whole-page scroll-linked elements on mobile */
+  /* Prevent flex and grid children from overflowing narrow mobile viewports */
+  .grid > *,
+  .flex > * {
+    min-width: 0;
+  }
+
+  /* Prevent long words, Scripture references, and URLs from breaking mobile containers */
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  blockquote,
+  li,
+  a,
+  span {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  /* Responsive images & media safety on mobile */
+  img,
+  video,
+  svg {
+    max-width: 100%;
+  }
+
+  /* Visible accessible focus states on mobile */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible {
+    outline: 2px solid #E8913C !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Safe interactive form inputs (prevents iOS Safari auto-zoom on focus) */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+  }
+
+  /* Smooth GPU-accelerated interpolation for scroll-linked elements on mobile */
   .kinetic-ribbon-row,
   .statement-medallion-parallax,
   .statement-numeral-parallax,
@@ -229,13 +287,6 @@
     -webkit-backface-visibility: hidden !important;
   }
 
-  .horizontal-study-sticky {
-    height: 100dvh !important;
-    height: 100vh;
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
-  }
-
   .motion-ok .reveal-item {
     transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
                 transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) !important;
@@ -244,20 +295,17 @@
     -webkit-backface-visibility: hidden !important;
   }
 
-  /* Safe interactive inputs (prevents iOS Safari auto-zoom on mobile inputs) */
-  input, select, textarea {
-    font-size: 16px !important;
-  }
-
-  /* Section vertical & horizontal padding on mobile (excluding full-bleed #portal-hero) */
-  section:not(#portal-hero) {
+  /* Section vertical & horizontal padding on mobile (excluding full-bleed #portal-hero & horizontal sticky stage) */
+  section:not(#portal-hero):not(.horizontal-study-section) {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
   }
 
-  /* Fixed Header / Navbar & Mobile Hamburger Menu Drawer */
+  /* ==========================================================================
+     FIXED HEADER / NAVBAR & MOBILE HAMBURGER MENU DRAWER
+     ========================================================================== */
   header,
   header.site-header {
     height: 54px !important;
@@ -271,21 +319,26 @@
     height: 54px !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    gap: 0.75rem !important;
+    gap: 0.5rem !important;
     background-color: rgba(10, 12, 14, 0.92) !important;
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
   }
 
-  /* Hamburger / Bar Toggle Button on Mobile */
+  /* Hide "GET STARTED" pill button in header/navbar on mobile viewports (320px–767px) */
+  header > div.header-bar > div > button.label-caps {
+    display: none !important;
+  }
+
+  /* Hamburger / Bar Toggle Button on Mobile (44x44px minimum touch target) */
   .mobile-menu-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
     border-radius: 0.5rem !important;
     border: 1px solid rgba(237, 231, 220, 0.22) !important;
     background-color: rgba(16, 19, 23, 0.95) !important;
@@ -303,7 +356,7 @@
     flex-shrink: 0 !important;
   }
 
-  /* Mobile Navigation Drawer / Dropdown List (Shown when hamburger is clicked) */
+  /* Mobile Navigation Drawer / Dropdown List */
   #mobile-navigation-drawer,
   .mobile-nav-drawer {
     position: fixed !important;
@@ -346,6 +399,11 @@
     border-bottom: 1px solid rgba(237, 231, 220, 0.13) !important;
   }
 
+  .mobile-nav-header button {
+    min-height: 38px !important;
+    padding: 0.35rem 0.75rem !important;
+  }
+
   .mobile-nav-list {
     display: flex !important;
     flex-direction: column !important;
@@ -358,6 +416,7 @@
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
+    min-height: 48px !important;
     padding: 0.65rem 0.85rem !important;
     border-radius: 0.5rem !important;
     background-color: #101317 !important;
@@ -374,7 +433,7 @@
   }
 
   .mobile-nav-link-title {
-    font-size: 13.5px !important;
+    font-size: 14px !important;
     line-height: 1.25 !important;
     color: #EDE7DC !important;
     font-weight: 700 !important;
@@ -382,15 +441,15 @@
   }
 
   .mobile-nav-link-desc {
-    font-size: 9px !important;
-    line-height: 1.3 !important;
+    font-size: 10px !important;
+    line-height: 1.35 !important;
     color: #9EA5A8 !important;
     margin-top: 2px !important;
     display: block !important;
   }
 
   .mobile-nav-link-index {
-    font-size: 10.5px !important;
+    font-size: 11px !important;
     color: #E8913C !important;
     font-weight: 600 !important;
     flex-shrink: 0 !important;
@@ -408,12 +467,12 @@
 
   .mobile-nav-cta {
     width: 100% !important;
-    min-height: 44px !important;
+    min-height: 48px !important;
     padding: 0.75rem 1rem !important;
     border-radius: 9999px !important;
     background-color: #E8913C !important;
     color: #0A0C0E !important;
-    font-size: 11.5px !important;
+    font-size: 12px !important;
     font-weight: 700 !important;
     text-align: center !important;
     display: flex !important;
@@ -421,7 +480,9 @@
     justify-content: center !important;
   }
 
-  /* Portal Hero Section: Balanced 530vh height on mobile so a little scroll moves the orbit slightly faster than normal with smooth inertia */
+  /* ==========================================================================
+     PORTAL HERO SECTION & SCROLL-DRIVEN ORBITING MEDALLIONS
+     ========================================================================== */
   #portal-hero {
     height: 530vh !important;
     width: 100vw !important;
@@ -448,7 +509,6 @@
     z-index: 10 !important;
   }
 
-  /* Ellipse portal layer expanded on mobile so the entire orbit of images is exposed */
   .hero-ellipse-layer {
     width: 220vw !important;
     height: 220vh !important;
@@ -456,10 +516,6 @@
     top: -60vh !important;
   }
 
-  /* ==========================================================================
-     MOBILE SCROLL-DRIVEN ZOOM, CENTERED POSITION 1 -> SINGLE-IMAGE POSITION 2
-     WITH FAST & SMOOTH SCROLLING EFFECT
-     ========================================================================== */
   .hero-orbit-stage {
     width: 100vw !important;
     max-width: 100vw !important;
@@ -497,7 +553,6 @@
     transform-origin: center center !important;
   }
 
-  /* Orbiting images with scroll-driven scale/zoom, smooth interpolation, and zero blur while orbiting */
   .orbit-image {
     width: 100% !important;
     height: 100% !important;
@@ -527,7 +582,7 @@
     font-size: clamp(18px, 4.8vw, 24px) !important;
   }
   #portal-hero .z-50 .font-sora {
-    font-size: clamp(9.5px, 2.5vw, 11px) !important;
+    font-size: clamp(10px, 2.6vw, 11.5px) !important;
   }
 
   /* Initial split doors & title on closed doors */
@@ -536,28 +591,40 @@
     gap: 0.5rem !important;
   }
   #portal-hero h1 + p {
-    font-size: 11px !important;
-    max-width: 88% !important;
-    line-height: 1.4 !important;
+    font-size: 11.5px !important;
+    max-width: 90% !important;
+    line-height: 1.45 !important;
   }
 
-  /* Hero Video Callout */
+  /* Hero Video Callout & Action Buttons */
   #portal-hero .max-w-xl {
     left: 1rem !important;
     right: 1rem !important;
-    bottom: 3.5rem !important;
+    bottom: 3.25rem !important;
     max-width: calc(100vw - 2rem) !important;
   }
   #portal-hero .max-w-xl h2 {
-    font-size: clamp(1.35rem, 5.5vw, 2rem) !important;
+    font-size: clamp(1.4rem, 5.5vw, 2rem) !important;
+    line-height: 1.15 !important;
+  }
+  #portal-hero .max-w-xl p {
+    font-size: 0.9375rem !important;
+    line-height: 1.6 !important;
+  }
+  #portal-hero .max-w-xl a,
+  #portal-hero .max-w-xl button {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
-  /* Top and bottom persistent metadata */
+  /* Top and bottom persistent metadata in Hero */
   #portal-hero .pointer-events-none.absolute.top-\[74px\] {
     top: 60px !important;
     left: 1rem !important;
     right: 1rem !important;
-    font-size: 9px !important;
+    font-size: 9.5px !important;
   }
   #portal-hero .pointer-events-none.absolute.bottom-5 {
     bottom: 0.75rem !important;
@@ -568,40 +635,78 @@
 
   /* Kinetic scripture ticker */
   .label-caps {
-    font-size: 9.5px !important;
+    font-size: 10px !important;
     letter-spacing: 0.11em !important;
   }
 
-  /* Statement Fold Section */
+  /* ==========================================================================
+     STATEMENT FOLD SECTION (#statement-fold)
+     ========================================================================== */
   #statement-fold {
-    padding-top: 4.5rem !important;
-    padding-bottom: 4.5rem !important;
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
   }
   #statement-fold h2 {
-    font-size: clamp(1.35rem, 5.5vw, 2.2rem) !important;
+    font-size: clamp(1.35rem, 5.5vw, 2.15rem) !important;
+    line-height: 1.25 !important;
     max-width: 100% !important;
   }
+  #statement-fold p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
   #statement-fold .outlined-numeral {
-    font-size: 4.5rem !important;
-    margin-top: 1rem !important;
+    font-size: 4.25rem !important;
+    margin-top: 0.75rem !important;
+  }
+  /* Keep the Tetragrammaton medallion upright and crisp at 0deg on mobile */
+  #statement-fold .statement-medallion-parallax {
+    transform: none !important;
+    max-width: min(320px, 82vw) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  /* Spiritual Goal Section */
+  /* ==========================================================================
+     SPIRITUAL GOAL SECTION (#spiritual-goal — Romans 8:5–8)
+     ========================================================================== */
   #spiritual-goal {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
   }
   #spiritual-goal h2 {
-    font-size: clamp(1.85rem, 7vw, 2.85rem) !important;
+    font-size: clamp(1.85rem, 7vw, 2.75rem) !important;
+    line-height: 1.08 !important;
+  }
+  #spiritual-goal p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
+  /* Filter buttons & copy buttons touch target >= 44px */
+  #spiritual-goal button {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
   }
 
-  /* Pastor Greeting Section */
+  /* ==========================================================================
+     PASTOR GREETING SECTION (#pastor-greeting)
+     ========================================================================== */
   #pastor-greeting {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
   }
   #pastor-greeting h2 {
-    font-size: clamp(1.85rem, 7vw, 2.85rem) !important;
+    font-size: clamp(1.85rem, 7vw, 2.75rem) !important;
+    line-height: 1.08 !important;
+  }
+  #pastor-greeting p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
+  #pastor-greeting blockquote p {
+    font-size: clamp(1rem, 4.2vw, 1.2rem) !important;
+    line-height: 1.55 !important;
   }
   #pastor-greeting .lg\:col-span-7 .flex.flex-wrap {
     flex-direction: column !important;
@@ -613,27 +718,149 @@
     width: 100% !important;
     justify-content: center !important;
     text-align: center !important;
-    min-height: 44px !important;
+    min-height: 48px !important;
   }
 
-  /* Throwable Study Deck */
+  /* ==========================================================================
+     HORIZONTAL STUDY SCROLL SECTION (.horizontal-study-section)
+     ========================================================================== */
+  .horizontal-study-sticky {
+    height: 100dvh !important;
+    height: 100vh;
+    padding-top: 4rem !important;
+    padding-bottom: 1.25rem !important;
+    justify-content: space-between !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+  .horizontal-study-section h2 {
+    font-size: clamp(1.4rem, 5.8vw, 2.1rem) !important;
+    line-height: 1.12 !important;
+  }
+  .horizontal-study-section .horizontal-study-sticky > div:first-child button {
+    min-height: 44px !important;
+    padding: 0.5rem 0.9rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .horizontal-study-track > article {
+    width: calc(100vw - 2.5rem) !important;
+    max-width: 340px !important;
+  }
+  .horizontal-study-track > article > div:first-child {
+    height: clamp(8.5rem, 21dvh, 11.5rem) !important;
+  }
+  .horizontal-study-track > article > div:last-child {
+    padding: 1rem 1.15rem !important;
+  }
+  .horizontal-study-track > article h3 {
+    font-size: clamp(1.1rem, 4.6vw, 1.35rem) !important;
+    line-height: 1.2 !important;
+  }
+  .horizontal-study-track > article p {
+    font-size: 0.875rem !important;
+    line-height: 1.55 !important;
+  }
+  .horizontal-study-track > article button {
+    min-height: 44px !important;
+    padding: 0.5rem 0.85rem !important;
+  }
+
+  /* ==========================================================================
+     THROWABLE STUDY DECK SECTION (#study-archive)
+     ========================================================================== */
+  #study-archive h2 {
+    font-size: clamp(1.75rem, 6.8vw, 2.6rem) !important;
+    line-height: 1.08 !important;
+  }
+  #study-archive p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
+  #study-archive button {
+    min-height: 44px !important;
+  }
+  /* Keep role="tab" pagination dots visually sleek with comfortable touch hit area */
+  #study-archive [role="tablist"] {
+    gap: 0.5rem !important;
+    padding: 0.25rem 0 !important;
+  }
+  #study-archive [role="tab"] {
+    min-height: 24px !important;
+    min-width: 24px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
   #study-archive .lg\:col-span-6:last-child {
-    max-width: 380px !important;
+    max-width: min(370px, calc(100vw - 2.5rem)) !important;
     margin-left: auto !important;
     margin-right: auto !important;
     width: 100% !important;
   }
 
-  /* Contact Section */
+  /* ==========================================================================
+     FOUR SPIRITUAL PILLARS ROSTER (#pillars-roster)
+     ========================================================================== */
+  #pillars-roster h2 {
+    font-size: clamp(1.6rem, 6.2vw, 2.35rem) !important;
+  }
+  #pillars-roster h3 {
+    font-size: clamp(1.25rem, 5vw, 1.65rem) !important;
+  }
+  #pillars-roster p {
+    font-size: 0.9375rem !important;
+    line-height: 1.6 !important;
+  }
+  #pillars-roster .w-40 {
+    width: auto !important;
+  }
+
+  /* ==========================================================================
+     SCRIPTURE EVIDENCE ARCHIVE (#scripture-evidence)
+     ========================================================================== */
+  #scripture-evidence h2 {
+    font-size: clamp(1.6rem, 6.2vw, 2.35rem) !important;
+  }
+  #scripture-evidence p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
+  #scripture-evidence button {
+    min-height: 44px !important;
+  }
+  /* Exegesis Panel top metadata bar: allow clean wrapping on mobile */
+  #scripture-evidence .h-10.px-4.hairline-b.flex {
+    height: auto !important;
+    min-height: 2.75rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* ==========================================================================
+     CONTACT SECTION (#contact)
+     ========================================================================== */
   #contact {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
   }
   #contact h2 {
-    font-size: clamp(2rem, 8vw, 3rem) !important;
+    font-size: clamp(1.95rem, 7.5vw, 2.85rem) !important;
+    line-height: 1.05 !important;
+  }
+  #contact p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
   }
   #contact form {
     padding: 1.25rem !important;
+  }
+  #contact form input,
+  #contact form select {
+    min-height: 48px !important;
   }
   #contact form button[type="submit"] {
     width: 100% !important;
@@ -641,35 +868,46 @@
     justify-content: center !important;
   }
 
-  /* Modals on mobile: full viewport presence */
+  /* ==========================================================================
+     MODALS & DIALOGS (role="dialog")
+     ========================================================================== */
   div[role="dialog"] > div {
     max-width: 95vw !important;
     width: 95vw !important;
     margin: 0.5rem auto !important;
-    max-height: 94vh !important;
+    max-height: 92dvh !important;
+  }
+  div[role="dialog"] p {
+    font-size: 0.9375rem !important;
+    line-height: 1.65 !important;
+  }
+  div[role="dialog"] button {
+    min-height: 44px !important;
   }
 
-  /* Footer wordmark */
+  /* ==========================================================================
+     FOOTER & MONUMENTAL WORDMARK
+     ========================================================================== */
+  footer a,
+  section:last-of-type a {
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
   footer motion.div,
   section:last-of-type .font-syne.tracking-\[-0\.035em\] {
-    font-size: clamp(2.4rem, 11vw, 5rem) !important;
-    max-width: 100vw !important;
+    font-size: clamp(2.25rem, 10.5vw, 4.75rem) !important;
+    max-width: 100% !important;
     overflow: hidden !important;
   }
 }
 
 /* ----------------------------------------------------------------------------
-   2. STANDARD MOBILE PHONES (max-width: 640px)
+   2. LARGE & STANDARD MOBILE PHONES (max-width: 639px)
 ---------------------------------------------------------------------------- */
-@media (max-width: 640px) {
-  html, body {
-    scroll-behavior: smooth !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: auto !important;
-  }
-
-  /* Section padding on small mobile (excluding full-bleed #portal-hero) */
-  section:not(#portal-hero) {
+@media screen and (max-width: 639px) {
+  /* Section padding on standard mobile (excluding full-bleed #portal-hero & horizontal sticky stage) */
+  section:not(#portal-hero):not(.horizontal-study-section) {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     padding-top: 3.5rem !important;
@@ -678,29 +916,6 @@
 
   #portal-hero {
     height: 520vh !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-  }
-
-  /* Hero orbit stage on 640px phones: Position 1 centered ring -> Position 2 zoomed single image */
-  .hero-orbit-stage {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vw !important;
-    max-height: 100vw !important;
-    margin: 0 auto !important;
-    flex-shrink: 0 !important;
-    top: -4vh !important;
-    left: var(--mobile-orbit-left, -7vw) !important;
-    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
-    filter: var(--mobile-orbit-blur, blur(0px)) !important;
-    opacity: var(--mobile-orbit-opacity, 1) !important;
-    transform-origin: center center !important;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 0.22s ease-out !important;
   }
 
   /* Typography inside ellipse */
@@ -716,7 +931,7 @@
     word-break: break-word !important;
   }
 
-  /* Throwable deck buttons */
+  /* Throwable deck action buttons stack cleanly */
   #study-archive .pt-2.flex.flex-wrap {
     flex-direction: column !important;
     width: 100% !important;
@@ -724,16 +939,21 @@
   #study-archive .pt-2.flex.flex-wrap button {
     width: 100% !important;
     justify-content: center !important;
+    min-height: 48px !important;
   }
 
-  /* Scripture Evidence Table */
+  /* Scripture Evidence Table: stack columns cleanly on narrow screens so long references never clip */
   #scripture-evidence input {
     font-size: 16px !important;
     padding: 0.75rem !important;
+    min-height: 46px !important;
   }
   #scripture-evidence .grid.grid-cols-2.sm\:grid-cols-6 {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.5rem !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.35rem !important;
+  }
+  #scripture-evidence .grid.grid-cols-2.sm\:grid-cols-6 > div:last-child {
+    text-align: left !important;
   }
 
   /* Footer copyright & social row */
@@ -746,26 +966,16 @@
 }
 
 /* ----------------------------------------------------------------------------
-   3. COMPACT MOBILE PHONES (max-width: 480px)
+   3. STANDARD & COMPACT MOBILE PHONES (max-width: 479px)
 ---------------------------------------------------------------------------- */
-@media (max-width: 480px) {
-  html, body {
-    scroll-behavior: smooth !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: auto !important;
-  }
-
-  /* Header & Mobile Menu tighter spacing on compact phones */
+@media screen and (max-width: 479px) {
+  /* Header & Mobile Menu spacing on compact phones */
   header > div.header-bar {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
   }
   header a.font-syne span {
     font-size: 13px !important;
-  }
-  header button.label-caps {
-    font-size: 9.5px !important;
-    padding: 0.25rem 0.65rem !important;
   }
   #mobile-navigation-drawer,
   .mobile-nav-drawer {
@@ -775,49 +985,17 @@
     gap: 0.4rem !important;
   }
   .mobile-nav-link {
-    padding: 0.55rem 0.75rem !important;
+    padding: 0.6rem 0.75rem !important;
   }
   .mobile-nav-link-title {
-    font-size: 13px !important;
+    font-size: 13.5px !important;
   }
   .mobile-nav-link-desc {
-    font-size: 8.5px !important;
+    font-size: 9.5px !important;
   }
 
   #portal-hero {
     height: 500vh !important;
-  }
-
-  /* OrbitImages Stage: Position 1 centered ring -> Position 2 zoomed single image */
-  .hero-orbit-stage {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vw !important;
-    max-height: 100vw !important;
-    margin: 0 auto !important;
-    flex-shrink: 0 !important;
-    top: -4vh !important;
-    left: var(--mobile-orbit-left, -7vw) !important;
-    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
-    filter: var(--mobile-orbit-blur, blur(0px)) !important;
-    opacity: var(--mobile-orbit-opacity, 1) !important;
-    transform-origin: center center !important;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 0.22s ease-out !important;
-  }
-
-  /* Single visible focused medallion on compact mobile with scroll-driven zoom and zero blur while orbiting */
-  .orbit-image {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    border-radius: 50% !important;
-    opacity: 1 !important;
-    transform: translate3d(0, 0, 0) scale(var(--mobile-item-zoom, 1)) !important;
-    transform-origin: center center !important;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.58)) !important;
   }
 
   /* Initial split title on closed doors */
@@ -825,9 +1003,9 @@
     font-size: clamp(1.35rem, 6.2vw, 1.85rem) !important;
   }
 
-  /* Deck card maximum width */
+  /* Deck card maximum width so rotated back cards never cause horizontal scroll */
   #study-archive .lg\:col-span-6:last-child {
-    max-width: 310px !important;
+    max-width: min(305px, calc(100vw - 2.5rem)) !important;
   }
 
   /* Contact inputs full-width padding */
@@ -843,72 +1021,88 @@
     padding: 1rem !important;
   }
   div[role="dialog"] .h-56 {
-    height: 160px !important;
+    height: 155px !important;
   }
 
   /* Full-width wordmark in footer */
   section:last-of-type .font-syne.tracking-\[-0\.035em\] {
-    font-size: clamp(2rem, 9.8vw, 3.4rem) !important;
+    font-size: clamp(1.9rem, 9.6vw, 3.2rem) !important;
   }
 }
 
 /* ----------------------------------------------------------------------------
-   4. ULTRA-COMPACT MOBILE PHONES (max-width: 360px)
+   4. SMALL MOBILE PHONES (320px – 374px)
 ---------------------------------------------------------------------------- */
-@media (max-width: 360px) {
-  html, body {
-    scroll-behavior: smooth !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: auto !important;
+@media screen and (max-width: 374px) {
+  section:not(#portal-hero):not(.horizontal-study-section) {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
   }
 
   #portal-hero {
     height: 490vh !important;
   }
 
-  /* Extra compact orbit stage: Position 1 centered ring -> Position 2 zoomed single image */
-  .hero-orbit-stage {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vw !important;
-    max-height: 100vw !important;
-    margin: 0 auto !important;
-    flex-shrink: 0 !important;
-    top: -4vh !important;
-    left: var(--mobile-orbit-left, -7vw) !important;
-    transform: translate3d(0, 0, 0) scale(var(--mobile-orbit-zoom, 0.90)) !important;
-    filter: var(--mobile-orbit-blur, blur(0px)) !important;
-    opacity: var(--mobile-orbit-opacity, 1) !important;
-    transform-origin: center center !important;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 0.22s ease-out !important;
-  }
-
-  .orbit-image {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    border-radius: 50% !important;
-    opacity: 1 !important;
-    transform: translate3d(0, 0, 0) scale(var(--mobile-item-zoom, 1)) !important;
-    transform-origin: center center !important;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  }
-
-  /* Deck card max width */
-  #study-archive .lg\:col-span-6:last-child {
-    max-width: 270px !important;
-  }
-
-  /* Hero title */
+  /* Hero title & navigation wordmark on 320px phones */
   #portal-hero h1 {
     font-size: 1.25rem !important;
   }
-
-  /* Navigation wordmark */
   header a.font-syne span {
-    font-size: 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* Horizontal study cards fit 320px viewport cleanly */
+  .horizontal-study-track > article {
+    width: calc(100vw - 1.75rem) !important;
+    max-width: 292px !important;
+  }
+
+  /* Deck card max width on 320px–374px phones */
+  #study-archive .lg\:col-span-6:last-child {
+    max-width: min(268px, calc(100vw - 2rem)) !important;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   5. MOBILE LANDSCAPE ORIENTATION (max-width: 767px and short height)
+---------------------------------------------------------------------------- */
+@media screen and (max-width: 767px) and (max-height: 500px) and (orientation: landscape) {
+  .hero-orbit-stage {
+    width: 68vh !important;
+    max-width: 68vh !important;
+    height: 68vh !important;
+    max-height: 68vh !important;
+    top: -2vh !important;
+  }
+
+  #portal-hero .max-w-xl {
+    bottom: 1.5rem !important;
+  }
+
+  .horizontal-study-track > article > div:first-child {
+    height: 6.5rem !important;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   6. MOBILE REDUCED MOTION ACCESSIBILITY (max-width: 767px)
+---------------------------------------------------------------------------- */
+@media screen and (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  .kinetic-ribbon-row,
+  .statement-medallion-parallax,
+  .statement-numeral-parallax,
+  .horizontal-study-track,
+  .scrubbed-statement-word,
+  .hero-orbit-stage,
+  .orbit-image {
+    transition: none !important;
   }
 }
 

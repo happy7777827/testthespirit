@@ -154,7 +154,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'Does the spirit behind the message lead people toward reverence, holiness, and obedience to God’s Word?'
     ],
     pastoralNote:
-      'When we test the spirits by the Word of God, we do so not out of cynicism, but out of deep devotion to the Good Shepherd whose voice is never contrary to the Scriptures He inspired. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'When we test the spirits by the Word of God, we do so not out of cynicism, but out of deep devotion to the Good Shepherd whose voice is never contrary to the Scriptures He inspired. — Pastor Shahid Hanif'
   },
   {
     id: 'false-prophets-teaching',
@@ -185,7 +185,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'What is the long-term character, accountability, and fruit in the lives of the teacher and their followers?'
     ],
     pastoralNote:
-      'A wolf in sheep’s clothing is detected not by the fleece he wears, but by the diet he feeds the flock and the direction he leads them. Only the lamp of Scripture exposes the difference. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'A wolf in sheep’s clothing is detected not by the fleece he wears, but by the diet he feeds the flock and the direction he leads them. Only the lamp of Scripture exposes the difference. — Pastor Shahid Hanif'
   },
   {
     id: 'holy-spirit-in-scripture',
@@ -216,7 +216,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'Does the teaching distinguish between emotional excitement and genuine regeneration and sanctification by the Spirit?'
     ],
     pastoralNote:
-      'The Spirit and the Word are inseparable in Christian experience. Where the Holy Spirit truly moves, Jesus Christ is magnified and the Scriptures are loved, obeyed, and proclaimed. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'The Spirit and the Word are inseparable in Christian experience. Where the Holy Spirit truly moves, Jesus Christ is magnified and the Scriptures are loved, obeyed, and proclaimed. — Pastor Shahid Hanif'
   },
   {
     id: 'prophecy-and-discernment',
@@ -247,7 +247,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'Does it conform to the apostolic rule that all things be done unto edifying, decently, and in order (1 Corinthians 14:26, 40)?'
     ],
     pastoralNote:
-      'Biblical discernment protects the church from both extremes: cold formalism on one hand and unscriptural fanaticism on the other. We test every word by the infallible standard of Scripture. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'Biblical discernment protects the church from both extremes: cold formalism on one hand and unscriptural fanaticism on the other. We test every word by the infallible standard of Scripture. — Pastor Shahid Hanif'
   },
   {
     id: 'biblical-context',
@@ -278,7 +278,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'Does the interpretation harmonize with the rest of the Bible’s teaching on this subject?'
     ],
     pastoralNote:
-      'A text taken out of its context becomes a pretext for human invention. When we read Scripture carefully in its full context, the voice of God shines with unmistakable clarity. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'A text taken out of its context becomes a pretext for human invention. When we read Scripture carefully in its full context, the voice of God shines with unmistakable clarity. — Pastor Shahid Hanif'
   },
   {
     id: 'christian-apologetics',
@@ -309,7 +309,7 @@ export const STUDY_ARCHIVE: StudyModule[] = [
       'Do I distinguish clearly between primary essentials of the Christian faith and secondary matters of conscience?'
     ],
     pastoralNote:
-      'We contend for the faith without being contentious in spirit. Grounded in Scripture and guided by truth, we hold forth the Word of life with conviction and grace. — Pastor Shahid Hanif & Pastor Sandesh Shalom'
+      'We contend for the faith without being contentious in spirit. Grounded in Scripture and guided by truth, we hold forth the Word of life with conviction and grace. — Pastor Shahid Hanif'
   }
 ];
 

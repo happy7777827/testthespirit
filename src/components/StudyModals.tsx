@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, ArrowRight } from 'lucide-react';
 import { StudyModule, FeaturePillar, FEATURE_PILLARS, STUDY_ARCHIVE } from '../data/scriptureData';
 
@@ -10,6 +10,15 @@ interface StudyReaderModalProps {
 
 export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderModalProps) {
   const [checkedQuestions, setCheckedQuestions] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    if (!study) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [study, onClose]);
 
   if (!study) return null;
 
@@ -213,6 +222,15 @@ export function StudyPlanModal({
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState('');
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const activePillar =
@@ -339,7 +357,7 @@ export function StudyPlanModal({
               Submit a Scripture Question or Request Study Notes
             </h3>
             <p className="text-xs text-[#6C7378] mb-4">
-              Led by Pastor Shahid Hanif &amp; Pastor Sandesh Shalom · Grounded in Scripture. Guided by Truth.
+              Led by Pastor Shahid Hanif · Grounded in Scripture. Guided by Truth.
             </p>
 
             {submitted ? (
