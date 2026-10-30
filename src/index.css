@@ -27,6 +27,13 @@
     color: var(--ink-primary);
     overflow-x: hidden;
   }
+
+  html.modal-scroll-lock,
+  body.modal-scroll-lock {
+    overflow: hidden !important;
+    overflow-y: hidden !important;
+    overscroll-behavior: none !important;
+  }
 }
 
 @keyframes fade-up {
@@ -212,6 +219,13 @@
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: auto !important;
     touch-action: pan-y !important;
+  }
+
+  html.modal-scroll-lock,
+  body.modal-scroll-lock {
+    overflow: hidden !important;
+    overflow-y: hidden !important;
+    overscroll-behavior: none !important;
   }
 
   main,

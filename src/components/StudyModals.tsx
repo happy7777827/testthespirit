@@ -1,6 +1,121 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle2, ArrowRight } from 'lucide-react';
 import { StudyModule, FeaturePillar, FEATURE_PILLARS, STUDY_ARCHIVE } from '../data/scriptureData';
+
+/**
+ * Strictly locks the background page ("back page") from moving or scrolling
+ * while a modal dialog is open, without shifting scroll position on open/close.
+ */
+function useLockBodyScroll(
+  isOpen: boolean,
+  scrollBodyRef: React.RefObject<HTMLDivElement | null>
+) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const savedScrollY = window.scrollY;
+    const scrollbarWidth = window.innerWidth - htmlEl.clientWidth;
+
+    const prevHtmlOverflow = htmlEl.style.overflow;
+    const prevBodyOverflow = bodyEl.style.overflow;
+    const prevBodyPaddingRight = bodyEl.style.paddingRight;
+
+    htmlEl.classList.add('modal-scroll-lock');
+    bodyEl.classList.add('modal-scroll-lock');
+    htmlEl.style.overflow = 'hidden';
+    bodyEl.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      bodyEl.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+      const scrollEl = scrollBodyRef.current;
+      if (!scrollEl) {
+        e.preventDefault();
+        return;
+      }
+
+      const target = e.target as Node | null;
+      const isInsideScrollBody = target ? scrollEl.contains(target) : false;
+
+      if (!isInsideScrollBody) {
+        // Cursor is on the modal backdrop or modal header: route wheel scroll to modal body and never scroll back page
+        e.preventDefault();
+        scrollEl.scrollTop += e.deltaY;
+        return;
+      }
+
+      // Cursor is inside the modal scrollable body: prevent scroll chaining at top/bottom limits
+      const atTop = scrollEl.scrollTop <= 0 && e.deltaY < 0;
+      const atBottom =
+        scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1 &&
+        e.deltaY > 0;
+
+      if (atTop || atBottom) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const scrollEl = scrollBodyRef.current;
+      const target = e.target as Node | null;
+      if (!scrollEl || !target || !scrollEl.contains(target)) {
+        e.preventDefault();
+      }
+    };
+
+    const handleKeyScroll = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const scrollKeys = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '];
+      if (scrollKeys.includes(e.key)) {
+        const scrollEl = scrollBodyRef.current;
+        if (scrollEl) {
+          e.preventDefault();
+          const step = e.key === 'PageDown' || e.key === ' ' ? 260 : e.key === 'PageUp' ? -260 : e.key === 'ArrowDown' ? 60 : e.key === 'ArrowUp' ? -60 : 0;
+          if (e.key === 'Home') {
+            scrollEl.scrollTop = 0;
+          } else if (e.key === 'End') {
+            scrollEl.scrollTop = scrollEl.scrollHeight;
+          } else {
+            scrollEl.scrollTop += step;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('keydown', handleKeyScroll);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyScroll);
+
+      htmlEl.classList.remove('modal-scroll-lock');
+      bodyEl.classList.remove('modal-scroll-lock');
+      htmlEl.style.overflow = prevHtmlOverflow;
+      bodyEl.style.overflow = prevBodyOverflow;
+      bodyEl.style.paddingRight = prevBodyPaddingRight;
+
+      if (Math.abs(window.scrollY - savedScrollY) > 1) {
+        window.scrollTo({ top: savedScrollY, behavior: 'instant' as ScrollBehavior });
+      }
+    };
+  }, [isOpen, scrollBodyRef]);
+}
 
 interface StudyReaderModalProps {
   study: StudyModule | null;
@@ -10,9 +125,15 @@ interface StudyReaderModalProps {
 
 export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderModalProps) {
   const [checkedQuestions, setCheckedQuestions] = useState<Record<number, boolean>>({});
+  const scrollBodyRef = useRef<HTMLDivElement | null>(null);
+
+  useLockBodyScroll(!!study, scrollBodyRef);
 
   useEffect(() => {
     if (!study) return;
+    if (scrollBodyRef.current) {
+      scrollBodyRef.current.scrollTop = 0;
+    }
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -28,18 +149,18 @@ export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderM
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-hidden overscroll-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby="study-modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-4 sm:my-8 text-[#EDE7DC] overflow-hidden rounded-sm"
+        className="relative w-full max-w-3xl max-h-[92vh] flex flex-col bg-[#101317] hairline-border text-[#EDE7DC] overflow-hidden rounded-sm shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Visual Banner */}
-        <div className="relative h-44 sm:h-56 overflow-hidden hairline-b bg-[#0A0C0E]">
+        <div className="relative h-40 sm:h-52 shrink-0 overflow-hidden hairline-b bg-[#0A0C0E]">
           <img
             src={study.image}
             alt={study.title}
@@ -48,14 +169,15 @@ export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderM
           />
 
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close study guide"
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 min-w-[40px] min-h-[40px] bg-[#0A0C0E]/90 hairline-border flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer rounded-full"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 min-w-[40px] min-h-[40px] bg-[#0A0C0E]/90 hairline-border flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer rounded-full z-10"
           >
             <X className="w-4 h-4" />
           </button>
 
-          <div className="absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 bg-[#0A0C0E]/90 p-3 sm:p-4 hairline-border">
+          <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-6 sm:right-6 bg-[#0A0C0E]/90 p-3 sm:p-4 hairline-border">
             <div className="label-caps text-[#E8913C] text-[10px] sm:text-[10.5px] mb-1">
               BIBLICAL STUDY ARCHIVE · {study.category} · {study.keyVerseRef}
             </div>
@@ -70,7 +192,11 @@ export function StudyReaderModal({ study, onClose, onSelectStudy }: StudyReaderM
         </div>
 
         {/* Body Content */}
-        <div className="p-4 sm:p-8 space-y-6 max-h-[70vh] sm:max-h-[68vh] overflow-y-auto">
+        <div
+          ref={scrollBodyRef}
+          data-modal-scroll-body="true"
+          className="p-4 sm:p-8 space-y-6 flex-1 min-h-0 overflow-y-auto overscroll-contain"
+        >
           {/* Foundational Scripture Box */}
           <div className="bg-[#0A0C0E] p-5 border border-[#E8913C]">
             <div className="label-caps text-[#E8913C] mb-2">
@@ -221,9 +347,15 @@ export function StudyPlanModal({
   const [questionText, setQuestionText] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState('');
+  const scrollBodyRef = useRef<HTMLDivElement | null>(null);
+
+  useLockBodyScroll(isOpen, scrollBodyRef);
 
   useEffect(() => {
     if (!isOpen) return;
+    if (scrollBodyRef.current) {
+      scrollBodyRef.current.scrollTop = 0;
+    }
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -248,17 +380,17 @@ export function StudyPlanModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-[#0A0C0E]/90 backdrop-blur-md p-2 sm:p-4 overflow-hidden overscroll-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby="workbook-modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl bg-[#101317] hairline-border my-4 sm:my-8 text-[#EDE7DC] overflow-hidden rounded-sm"
+        className="relative w-full max-w-3xl max-h-[92vh] flex flex-col bg-[#101317] hairline-border text-[#EDE7DC] overflow-hidden rounded-sm shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-5 hairline-b bg-[#0A0C0E]">
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-5 shrink-0 hairline-b bg-[#0A0C0E]">
           <div>
             <div className="label-caps text-[#E8913C] text-[10px] sm:text-[10.5px]">
               BEREAN DISCERNMENT FRAMEWORK
@@ -268,6 +400,7 @@ export function StudyPlanModal({
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close modal"
             className="min-w-[40px] min-h-[40px] bg-[#101317] hairline-border rounded-full flex items-center justify-center text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer"
@@ -276,7 +409,11 @@ export function StudyPlanModal({
           </button>
         </div>
 
-        <div className="p-4 sm:p-8 space-y-6 max-h-[76vh] sm:max-h-[74vh] overflow-y-auto">
+        <div
+          ref={scrollBodyRef}
+          data-modal-scroll-body="true"
+          className="p-4 sm:p-8 space-y-6 flex-1 min-h-0 overflow-y-auto overscroll-contain"
+        >
           {/* Interactive Pillar Selector */}
           <div>
             <div className="label-caps text-[#6C7378] mb-2.5">

@@ -1130,7 +1130,7 @@ export default function App() {
                     onClick={() => setThrowTriggerCount((c) => c + 1)}
                     className="px-6 py-3 rounded-full bg-transparent hairline-border label-caps text-[#EDE7DC] hover:text-[#E8913C] hover:border-[#E8913C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
                   >
-                    THROW NEXT SLEEVE →
+                    NEXT
                   </button>
                 </div>
               </motion.div>
